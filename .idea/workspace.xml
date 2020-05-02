@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="2973a65c-3088-46d2-b821-eb71355377a4" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1Yu3CXQUzllKHIKm8eNMWmd9UQ3" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Aykut\Desktop\SistemProgramlama\Route" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Aykut\Desktop\SistemProgramlama" />
+    </key>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2973a65c-3088-46d2-b821-eb71355377a4" name="Default Changelist" comment="" />
+      <created>1583778524256</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1583778524256</updated>
+      <workItem from="1583778525602" duration="8230000" />
+      <workItem from="1583833938513" duration="2581000" />
+      <workItem from="1585473093337" duration="10481000" />
+      <workItem from="1585486227741" duration="6278000" />
+      <workItem from="1586297489414" duration="5034000" />
+      <workItem from="1586438700673" duration="129000" />
+      <workItem from="1586528059299" duration="17348000" />
+      <workItem from="1586608698203" duration="6630000" />
+      <workItem from="1586624225957" duration="6273000" />
+      <workItem from="1586697079064" duration="182000" />
+      <workItem from="1586732123713" duration="10549000" />
+      <workItem from="1586814031299" duration="10803000" />
+      <workItem from="1586850862059" duration="823000" />
+      <workItem from="1587292354753" duration="628000" />
+      <workItem from="1587746447456" duration="57000" />
+      <workItem from="1588428045136" duration="22000" />
+      <workItem from="1588428089859" duration="1016000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="413" y="112" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1586818831185">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="413" y="112" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1366.728/1366.0.1366.728@0.0.1366.728" timestamp="1586818831185" />
+    <state x="463" y="120" key="FileChooserDialogImpl" timestamp="1583781854712">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="463" y="120" key="FileChooserDialogImpl/0.0.1366.728/1366.0.1366.728@0.0.1366.728" timestamp="1583781854712" />
+    <state width="1345" height="179" key="GridCell.Tab.0.bottom" timestamp="1585488002915">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1345" height="179" key="GridCell.Tab.0.bottom/0.0.1366.728/1366.0.1366.728@0.0.1366.728" timestamp="1585488002915" />
+    <state width="1345" height="179" key="GridCell.Tab.0.center" timestamp="1585488002915">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1345" height="179" key="GridCell.Tab.0.center/0.0.1366.728/1366.0.1366.728@0.0.1366.728" timestamp="1585488002915" />
+    <state width="1345" height="179" key="GridCell.Tab.0.left" timestamp="1585488002915">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1345" height="179" key="GridCell.Tab.0.left/0.0.1366.728/1366.0.1366.728@0.0.1366.728" timestamp="1585488002915" />
+    <state width="1345" height="179" key="GridCell.Tab.0.right" timestamp="1585488002915">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1345" height="179" key="GridCell.Tab.0.right/0.0.1366.728/1366.0.1366.728@0.0.1366.728" timestamp="1585488002915" />
+    <state x="339" y="162" key="run.anything.popup" timestamp="1586548093166">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="339" y="162" key="run.anything.popup/0.0.1366.728/1366.0.1366.728@0.0.1366.728" timestamp="1586548093166" />
+    <state x="346" y="49" width="672" height="678" key="search.everywhere.popup" timestamp="1586626685949">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="346" y="49" width="672" height="678" key="search.everywhere.popup/0.0.1366.728/1366.0.1366.728@0.0.1366.728" timestamp="1586626685949" />
+  </component>
+</project>
