@@ -9,8 +9,8 @@ const Navigation = props => (
     <header className="main-navigation">
         <div className="main-navigation_logo">
             <Navbar>
-                <Navbar.Brand href="/HomePage">
-                    <h1 className="main-navigation_logo_name">SYSTEM</h1>
+                <Navbar.Brand>
+                    <h1 className="main-navigation_logo_name"><NavLink to="/MainPage">SYSTEM</NavLink></h1>
                 </Navbar.Brand>
             </Navbar>
         </div>
