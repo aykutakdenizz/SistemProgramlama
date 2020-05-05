@@ -19,15 +19,16 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/frontend/src/Pages" />
     <property name="nodejs_package_manager_path" value="npm" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Aykut\Desktop\SistemProgramlama\frontend\src\Pages" />
+      <recent name="C:\Users\Aykut\Desktop\SistemProgramlama" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Aykut\Desktop\SistemProgramlama\Route" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Aykut\Desktop\SistemProgramlama" />
     </key>
   </component>
   <component name="SvnConfiguration">
@@ -56,7 +57,9 @@
       <workItem from="1587292354753" duration="628000" />
       <workItem from="1587746447456" duration="57000" />
       <workItem from="1588428045136" duration="22000" />
-      <workItem from="1588428089859" duration="1016000" />
+      <workItem from="1588428089859" duration="2257000" />
+      <workItem from="1588536001328" duration="17000" />
+      <workItem from="1588686866803" duration="1486000" />
     </task>
     <servers />
   </component>
@@ -68,7 +71,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

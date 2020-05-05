@@ -15,6 +15,7 @@ class Login extends Component {
         this.NameElement = React.createRef();
         this.PasswordElement = React.createRef();
         this.RoleElement = React.createRef();
+
     }
 
     submitHandler = async (event) => {
@@ -33,12 +34,12 @@ class Login extends Component {
                 <Modal.Header closeButton onClick={() => {
                     this.props.history.push('/HomePage');
                 }}>
-                    <Modal.Title>----------------------LOGIN------------------------</Modal.Title>
+                    <Modal.Title>LOGIN</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="x1">
                         <Card className="login_card">
-                            <Card.Header className="login_header">User or manager login</Card.Header>
+                            <Card.Header className="login_header">Login screen</Card.Header>
                             <Card.Body className="login_body">
                                 <Form className="x5" onSubmit={this.submitHandler}>
                                     <Row>
@@ -58,11 +59,15 @@ class Login extends Component {
                                                               ref={this.PasswordElement}/>
                                             </Form.Group>
                                         </Col>
+                                    </Row>
+                                    <Row>
                                         <Col md="auto">
-                                            <Form.Group controlId="formBasicIsActive">
-                                                <Form.Label>Role: (User Manager)</Form.Label>
-                                                <Form.Control type="range" min="0" max="1"
-                                                              ref={this.RoleElement}/>
+                                            <Form.Group controlId="exampleForm.ControlSelect1">
+                                                <Form.Label>Role select</Form.Label>
+                                                <Form.Control as="select" ref = {this.RoleElement}>
+                                                    <option>User</option>
+                                                    <option>Manager</option>
+                                                </Form.Control>
                                             </Form.Group>
                                         </Col>
 

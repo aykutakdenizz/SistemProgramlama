@@ -1,7 +1,8 @@
 export function login(person) {
     return async dispatch => {
         let token=null;
-        if(person.Role==="1"){
+        //console.log("Xx"+JSON.stringify(person));
+        if(person.Role==="Manager"){
             person.Role = "Manager";
         }else{
             person.Role = "User";
