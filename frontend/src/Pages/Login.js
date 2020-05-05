@@ -26,6 +26,7 @@ class Login extends Component {
             Role: this.RoleElement.current.value,
         };
         await this.props.login(person);
+        this.props.history.push('/MainPage');
     };
 
     render() {
