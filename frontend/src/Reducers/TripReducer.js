@@ -48,6 +48,14 @@ const TripReducer = (state= initialTrip, action) => {
                 SelectedTrip: action.payload.FindTrip,
                 Error: action.payload.Error,
                 Response: action.payload.Response,
+            };
+            break;
+        case "FIND_TRIP_WITH_TICKET":
+            state = {
+                ...state,
+                SelectedTrip: action.payload.FindTrip,
+                Error: action.payload.Error,
+                Response: action.payload.Response,
                 Show: action.payload.Show,
             };
             break;

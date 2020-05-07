@@ -204,18 +204,19 @@ export function findBus(token, busId) {
     };
 }
 
-export function findBusWithTrip(token, tripId) {
+export function findBusWithTicket(token, ticketId) {
     return async dispatch => {
         let selected_bus = null;
         let response = "..";
         let error = false;
-        await fetch('http://localhost:8000/bus/findBusWithTrip', {
+        let tripId =null;
+        await fetch('http://localhost:8000/bus/findBusWithTicket', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + token,
             },
-            body: '{"Trip_Id":' + tripId + '}'
+            body: '{"Ticket_Id":' + ticketId + '}'
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
                 error = true;
@@ -224,6 +225,47 @@ export function findBusWithTrip(token, tripId) {
         }).then(resData => {
             if(!error){
                 selected_bus = resData.Bus;
+                tripId=resData.Trip_Id;
+            }else{
+                response = resData.Error;
+            }
+        }).catch(err => {
+            console.log(err);
+        });
+
+        dispatch({
+            type: "FIND_BUS_WITH_TICKET",
+            payload: {
+                FindBus: selected_bus,
+                Response: response,
+                Error: error,
+                Trip_Id: tripId,
+            }
+        });
+    };
+}
+export function findBusWithTrip(token, id) {
+    return async dispatch => {
+        let selected_bus = null;
+        let response = "..";
+        let error = false;
+        let tripId =null;
+        await fetch('http://localhost:8000/bus/findBusWithTrip', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
+            },
+            body: '{"Trip_Id":' + id + '}'
+        }).then(res => {
+            if (res.status !== 200 && res.status !== 201) {
+                error = true;
+            }
+            return res.json();
+        }).then(resData => {
+            if(!error){
+                selected_bus = resData.Bus;
+                tripId=resData.Trip_Id;
             }else{
                 response = resData.Error;
             }
@@ -237,6 +279,7 @@ export function findBusWithTrip(token, tripId) {
                 FindBus: selected_bus,
                 Response: response,
                 Error: error,
+                Trip_Id: tripId,
             }
         });
     };

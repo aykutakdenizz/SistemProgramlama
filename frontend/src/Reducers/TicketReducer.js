@@ -54,7 +54,7 @@ const TicketReducer = (state= initialTicket, action) => {
         case "FIND_TICKET":
             state = {
                 ...state,
-                SelectedTicket: action.payload.Tickets,
+                SelectedTicket: action.payload.FindTicket,
                 Error: action.payload.Error,
                 Response: action.payload.Response,
             };

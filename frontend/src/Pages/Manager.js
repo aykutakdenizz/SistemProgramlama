@@ -9,15 +9,27 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import {CSVLink} from "react-csv";
+const DataTable = require('react-data-components').DataTable;
 
 let token = null;
+const headers = [
+    { label: 'Id', key: 'Id' },
+    { label: 'Name', key: 'Name' },
+    { label: 'Surname', key: 'Surname' },
+    { label: 'Real_Name', key: 'Real_Name' },
+];
 
 class Manager extends Component {
     constructor(props){
         super(props);
+        this.buttonsRender = this.buttonsRender.bind(this);
         this.state = {
             update: false,
             add:false,
+            sure:false,
+            managerId:null,
+            download:false,
         };
         this.ManagerNameElement = React.createRef();
         this.ManagerSurnameElement = React.createRef();
@@ -36,6 +48,19 @@ class Manager extends Component {
         this.props.updateManager(token,manager,this.props.managerReducer.Managers);
         this.setState({update: false});
     };
+    buttonsRender(id) {
+        return (
+            <ButtonGroup vertical>
+                <Button variant="success" onClick={()=>{
+                    this.setState({update:true});
+                    this.props.findManager(token,id);
+                }}>Update</Button>
+                <Button variant="danger" onClick={()=>{
+                    this.setState({sure:true,managerId:id});
+                }}>Delete</Button>
+            </ButtonGroup>
+        );
+    }
 
     componentDidMount() {
         token = localStorage.getItem("token");
@@ -43,43 +68,31 @@ class Manager extends Component {
     }
 
     render() {
-        const managerList = this.props.managerReducer.Managers.map(manager => {
-                return (
-                    <tr key={manager.Id} className="event__list-item">
-                        <td>{manager.Id}</td>
-                        <td>{manager.Name}</td>
-                        <td>{manager.Real_Name}</td>
-                        <td>{manager.Surname}</td>
-                        <td>
-                            <ButtonGroup vertical>
-                                <Button variant="success" onClick={()=>{
-                                    this.setState({update:true});
-                                    this.props.managerReducer.SelectedManager = manager;
-                                }}>Update</Button>
-                                <Button variant="danger" onClick={()=>{
-                                    this.props.deleteManager(token,manager.Id, this.props.managerReducer.Managers);
-                                }}>Delete</Button>
-                            </ButtonGroup>
-                        </td>
-                    </tr>
-
-                )
-            }
-        );
         return (
             <React.Fragment>
-                <Table responsive striped bordered hover>
-                    <thead>
-                    <tr>
-                        <th>Manager Id</th>
-                        <th>Manager Name</th>
-                        <th>Manager Real_Name</th>
-                        <th>Manager Surname</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>{managerList}</tbody>
-                </Table>
+
+                <DataTable
+                    keys="name3"
+                    columns={[
+                        { title: 'Id', prop: 'Id' },
+                        { title: 'Name', prop: 'Name' },
+                        { title: 'Real_Name', prop: 'Real_Name' },
+                        { title: 'Surname', prop: 'Surname' },
+                        { title: '' , prop:'Id',render: this.buttonsRender.bind(this), order:false}
+                    ]}
+                    initialData={this.props.managerReducer.Managers}
+                    initialPageLength={5}
+                    initialSortBy={{ prop: 'Id', order: 'descending' }}
+                    pageLengthOptions={[ 5, 20, 50 ]}
+                />
+
+                <Button variant="success" onClick={()=>{this.setState({download:!this.state.download});}}>
+                    Download.CSV
+                </Button>
+                {this.state.download && <CSVLink data={this.props.managerReducer.Managers} headers={headers} filename="managers.csv">Click Here</CSVLink>}
+
+
+
 
                 <Button onClick={() => {
                     this.props.findManager(token, 1);
@@ -153,6 +166,19 @@ class Manager extends Component {
                     <Modal.Footer>
                         <Button variant="danger" onClick={this.props.setErrorFalseManager}>
                             Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal show={this.state.sure}>
+                    <Modal.Header closeButton onClick={()=>{this.setState({sure:false})}}>
+                        <Modal.Title>Deleting Manager</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Are you sure to delete?</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="danger" onClick={()=>{this.setState({sure:false});
+                            this.props.deleteManager(token,this.state.managerId, this.props.managerReducer.Managers);}}>
+                            Delete
                         </Button>
                     </Modal.Footer>
                 </Modal>

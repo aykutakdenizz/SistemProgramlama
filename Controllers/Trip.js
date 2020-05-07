@@ -1,5 +1,5 @@
 const Trip = require('../Models/Trip');
-
+const Ticket = require('../Models/Ticket');
 exports.addTrip = (req, res, next) => {
     const newTrip = new Trip({
         //Id: req.body.Id,
@@ -119,4 +119,35 @@ exports.getTrips = (req, res, next) => {
                 Error: 'Trips can not find !! => ERR:' + err
             });
         });
+};
+exports.findTripWithTicket = (req, res, next) => {
+    if (req.body.Ticket_Id == null) {
+        return res.status(404).json({
+            Error: 'Values/Value missing when finding trip!'
+        });
+    }
+    Ticket.findOne({
+        where: {
+            Id: req.body.Ticket_Id,
+        }
+    }).then(ticket=>{
+        Trip.findOne({
+            where: {
+                Id: ticket.Trip_Id,
+            }
+        }).then(result =>
+            res.status(200).json({
+                Trip: result,
+                Ticket:ticket,
+            })
+        ).catch(err => {
+            res.status(500).json({
+                Error: 'Trip can not find !! => ERR:' + err
+            });
+        });
+    }).catch(err => {
+        res.status(500).json({
+            Error: 'Trip can not find !! => ERR:' + err
+        });
+    });
 };

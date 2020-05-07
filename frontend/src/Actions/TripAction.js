@@ -216,6 +216,54 @@ export function findTrip(token, tripId) {
     };
 }
 
+export function findTripWithTicket(token, id) {
+    return async dispatch => {
+        let selected_trip = null;
+        let response = [];
+        let error = false;
+        let show = false;
+        await fetch('http://localhost:8000/trip/findTripWithTicket', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
+            },
+            body: '{"Ticket_Id":' + id + '}'
+        }).then(res => {
+            if (res.status !== 200 && res.status !== 201) {
+                error = true;
+            }
+            return res.json();
+        }).then(resData => {
+            if(!error){
+                selected_trip = resData.Trip;
+                response.push("Destination:"+selected_trip.Destination);
+                response.push("Departure:"+selected_trip.Departure);
+                response.push( "Departure Time:"+selected_trip.Departure_Time);
+                response.push("Bus Id:"+selected_trip.Bus_Id);
+                response.push("Driver Id:"+selected_trip.Driver_Id);
+                response.push("Payment:"+selected_trip.Payment);
+                show = true;
+            }else{
+                response.push(resData.Error);
+            }
+
+        }).catch(err => {
+            console.log(err);
+        });
+
+        dispatch({
+            type: "FIND_TRIP_WITH_TICKET",
+            payload: {
+                FindTrip: selected_trip,
+                Response: response,
+                Error: error,
+                Show: show,
+            }
+        });
+    };
+}
+
 export function setErrorFalseTrip() {
     return async dispatch => {
         dispatch({

@@ -38,7 +38,7 @@ exports.addTicket = async (req, res, next) => {
                 Error: 'There is no bus or error occur when adding ticket!!'
             });
         }
-        if ((user.Money >= trip.Payment) && checkSeat(bus.Empty_Seats, req.body.Seat)) {
+        if ((user.Money >= trip.Payment) && checkSeat(bus.Empty_Seats, req.body.Seat) && (trip.Is_Active)) {
             User.update({
                     Money: (user.Money - trip.Payment)
                 },
@@ -83,7 +83,7 @@ exports.addTicket = async (req, res, next) => {
 
         } else {
             res.status(500).json({
-                Error: 'Ticket can not added no enough money or that seat is not empty!! => ERR:'
+                Error: 'Ticket can not added no enough money or that seat is not empty or Trip is not active'
             });
         }
     } else {

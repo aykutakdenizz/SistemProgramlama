@@ -10,98 +10,119 @@ import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
+import {CSVLink} from "react-csv";
+
+const DataTable = require('react-data-components').DataTable;
 let token = null;
+let actionObject = null;
+
 
 class Bus extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
+        this.buttonsRender = this.buttonsRender.bind(this);
+        this.buttonsRender2 = this.buttonsRender2.bind(this);
         this.state = {
             update: false,
-            add:false,
+            add: false,
+            sure: false,
+            busId: null,
+            download: false,
         };
         this.BusPlateElement = React.createRef();
         this.BusSeatPlanElement = React.createRef();
         this.BusEmptySeatsElement = React.createRef();
     }
+
     submitHandler = async (event) => {
         event.preventDefault();
-        let empty_seats=null;
-        if(this.BusEmptySeatsElement.current.value !== ""){
+        let empty_seats = null;
+        if (this.BusEmptySeatsElement.current.value !== "") {
             empty_seats = this.BusEmptySeatsElement.current.value.split(",");
         }
         const bus = {
             Id: this.props.busReducer.SelectedBus.Id,
-            Plate : (this.BusPlateElement.current.value ==="") ? (this.props.busReducer.SelectedBus.Plate):(this.BusPlateElement.current.value),
-            Seat_Plan :(this.BusSeatPlanElement.current.value ==="") ? (this.props.busReducer.SelectedBus.Seat_Plan):(this.BusSeatPlanElement.current.value),
-            Empty_Seats:(this.BusEmptySeatsElement.current.value ==="") ? null:(empty_seats),
+            Plate: (this.BusPlateElement.current.value === "") ? (this.props.busReducer.SelectedBus.Plate) : (this.BusPlateElement.current.value),
+            Seat_Plan: (this.BusSeatPlanElement.current.value === "") ? (this.props.busReducer.SelectedBus.Seat_Plan) : (this.BusSeatPlanElement.current.value),
+            Empty_Seats: (this.BusEmptySeatsElement.current.value === "") ? (this.props.busReducer.SelectedBus.Empty_Seats) : (empty_seats),
         };
-        this.props.updateBus(token,bus,this.props.busReducer.Buses);
+        this.props.updateBus(token, bus, this.props.busReducer.Buses);
         this.setState({update: false});
     };
     submitHandlerAdd = async (event) => {
         event.preventDefault();
         let empty_seats = null;
-        if(this.BusEmptySeatsElement.current.value !== ""){
+        if (this.BusEmptySeatsElement.current.value !== "") {
             empty_seats = this.BusEmptySeatsElement.current.value.split(",");
         }
         const bus = {
-            Plate : (this.BusPlateElement.current.value ==="") ? null:(this.BusPlateElement.current.value),
-            Seat_Plan :(this.BusSeatPlanElement.current.value ==="") ? null:(this.BusSeatPlanElement.current.value),
-            Empty_Seats:(this.BusEmptySeatsElement.current.value ==="") ? null:(empty_seats),
+            Plate: (this.BusPlateElement.current.value === "") ? null : (this.BusPlateElement.current.value),
+            Seat_Plan: (this.BusSeatPlanElement.current.value === "") ? null : (this.BusSeatPlanElement.current.value),
+            Empty_Seats: (this.BusEmptySeatsElement.current.value === "") ? null : (empty_seats),
         };
-        this.props.addBus(token,bus,this.props.busReducer.Buses);
+        this.props.addBus(token, bus, this.props.busReducer.Buses);
         this.setState({add: false});
     };
+
     componentDidMount() {
         token = localStorage.getItem("token");
         this.props.fetchBuses(token);
     }
 
-    render() {
-        const busList = this.props.busReducer.Buses.map(bus => {
-                return (
-                    <tr key={bus.Id} className="event__list-item">
-                        <td>{bus.Id}</td>
-                        <td>{bus.Plate}</td>
-                        <td>{bus.Seat_Plan}</td>
-                        <td>{(bus.Empty_Seats===null)?("No Seat"):((bus.Empty_Seats.length>0)?
-                            (bus.Empty_Seats.map(detail =>{return(detail+" ")})):("No Seat"))}
-                        </td>
-                        <td>
-                            <ButtonGroup vertical>
-                                {(localStorage.getItem("Role")==="Manager")?(
-                                <Button variant="success" onClick={()=>{
-                                    this.setState({update:true});
-                                    this.props.busReducer.SelectedBus = bus;
-                                }}>Update</Button>):null}
-                                {(localStorage.getItem("Role")==="Manager")?(
-                                <Button variant="danger" onClick={()=>{
-                                    this.props.deleteBus(token,bus.Id, this.props.busReducer.Buses);
-                                }}>Delete</Button>):null}
-                                {(localStorage.getItem("Role")==="User")?("No permission"):null}
-                            </ButtonGroup>
-                        </td>
-                    </tr>
-
-                )
-            }
+    buttonsRender(busId) {
+        return (
+            <ButtonGroup vertical>
+                {(localStorage.getItem("Role") === "Manager") ? (
+                    <Button variant="success" onClick={() => {
+                        this.setState({update: true});
+                        this.props.findBus(token, busId);
+                    }}>Update</Button>) : null}
+                {(localStorage.getItem("Role") === "Manager") ? (
+                    <Button variant="danger" onClick={() => {
+                        this.setState({sure: true, busId: busId});
+                    }}>Delete</Button>) : null}
+                {(localStorage.getItem("Role") === "User") ? ("No permission") : null}
+            </ButtonGroup>
         );
+    }
+    buttonsRender2(str) {
+        return (
+            (str===null)?("No Seat"):((str.length>0)?
+                (str.map(detail =>{return(detail+" ")})):("No Seat"))
+        );
+    }
+
+
+    render() {
         return (
             <React.Fragment>
-                <Table responsive striped bordered hover variant="dark">
-                    <thead>
-                    <tr>
-                        <th>Bus Id</th>
-                        <th>Bus Plate</th>
-                        <th>Bus Seat_Plan</th>
-                        <th>Bus Empty_Seats</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>{busList}</tbody>
-                </Table>
-                {(localStorage.getItem("Role")==="Manager")?(
-                <Button onClick={() => {this.setState({add: true})}} >ADD NEW BUS</Button>):null}
+                <DataTable
+                    keys="name"
+                    columns={[
+                        {title: 'Id', prop: 'Id'},
+                        {title: 'Plate', prop: 'Plate'},
+                        {title: 'Seat_Plan', prop: 'Seat_Plan'},
+                        {title: 'Empty_Seats', prop: 'Empty_Seats', render: this.buttonsRender2.bind(this)},
+                        {title: '', prop: 'Id', render: this.buttonsRender.bind(this), order: false}
+                    ]}
+                    initialData={this.props.busReducer.Buses}
+                    initialPageLength={5}
+                    initialSortBy={{prop: 'Id', order: 'descending'}}
+                    pageLengthOptions={[5, 20, 50]}
+                />
+
+                {(localStorage.getItem("Role") === "Manager") ? (
+                    <Button onClick={() => {
+                        this.setState({add: true})
+                    }}>ADD NEW BUS</Button>) : null}
+
+                <Button variant="success" onClick={() => {
+                    this.setState({download: !this.state.download});
+                }}>
+                    Download.CSV
+                </Button>
+                {this.state.download &&
+                <CSVLink data={this.props.busReducer.Buses} filename="buses.csv">Click Here</CSVLink>}
 
 
                 <Modal show={this.state.update}>
@@ -121,7 +142,7 @@ class Bus extends Component {
                                                 <Form.Group controlId="formBasicProjectName">
                                                     <Form.Label>Bus Plate</Form.Label>
                                                     <Form.Control type="text"
-                                                                  placeholder={(this.props.busReducer.SelectedBus===null) ? ("Please enter plate"):(this.props.busReducer.SelectedBus.Plate)}
+                                                                  placeholder={(this.props.busReducer.SelectedBus === null) ? ("Please enter plate") : (this.props.busReducer.SelectedBus.Plate)}
                                                                   ref={this.BusPlateElement}/>
                                                 </Form.Group>
                                             </Col>
@@ -129,7 +150,7 @@ class Bus extends Component {
                                                 <Form.Group controlId="formBasicProjectName">
                                                     <Form.Label>Bus Seat Plan</Form.Label>
                                                     <Form.Control type="text"
-                                                                  placeholder={(this.props.busReducer.SelectedBus===null) ? ("Please enter seat plan"):(this.props.busReducer.SelectedBus.Seat_Plan)}
+                                                                  placeholder={(this.props.busReducer.SelectedBus === null) ? ("Please enter seat plan") : (this.props.busReducer.SelectedBus.Seat_Plan)}
                                                                   ref={this.BusSeatPlanElement}/>
                                                 </Form.Group>
                                             </Col>
@@ -137,7 +158,7 @@ class Bus extends Component {
                                                 <Form.Group controlId="formBasicProjectName">
                                                     <Form.Label>Bus Empty Seats</Form.Label>
                                                     <Form.Control type="text"
-                                                                  placeholder={(this.props.busReducer.SelectedBus===null) ? ("Split via ','"):(this.props.busReducer.SelectedBus.Empty_Seats)}
+                                                                  placeholder={(this.props.busReducer.SelectedBus === null) ? ("Split via ','") : (this.props.busReducer.SelectedBus.Empty_Seats)}
                                                                   ref={this.BusEmptySeatsElement}/>
                                                 </Form.Group>
                                             </Col>
@@ -216,6 +237,23 @@ class Bus extends Component {
                         </Button>
                     </Modal.Footer>
                 </Modal>
+
+                <Modal show={this.state.sure}>
+                    <Modal.Header closeButton onClick={() => {
+                        this.setState({sure: false})
+                    }}>
+                        <Modal.Title>Deleting Bus</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Are you sure to delete?</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="danger" onClick={() => {
+                            this.setState({sure: false});
+                            this.props.deleteBus(token, this.state.busId, this.props.busReducer.Buses);
+                        }}>
+                            Delete
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </React.Fragment>
         );
 
@@ -234,11 +272,11 @@ const mapDispatchToProps = (dispatch) => {
         fetchBuses: (token) => {
             dispatch(fetchBuses(token));
         },
-        updateBus: (token, bus ,buses) => {
-            dispatch(updateBus(token, bus ,buses));
+        updateBus: (token, bus, buses) => {
+            dispatch(updateBus(token, bus, buses));
         },
-        deleteBus: (token, busId ,buses) => {
-            dispatch(deleteBus(token, busId ,buses));
+        deleteBus: (token, busId, buses) => {
+            dispatch(deleteBus(token, busId, buses));
         },
         addBus: (token, bus, buses) => {
             dispatch(addBus(token, bus, buses));

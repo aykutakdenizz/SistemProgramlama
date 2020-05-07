@@ -13,18 +13,25 @@ import Col from "react-bootstrap/Col";
 import {addTicket, setErrorFalseTicket, setSuccessFalseTicket} from "../Actions/TicketAction";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
-import { findBus} from "../Actions/BusActions";
+import {findBus, findBusWithTrip} from "../Actions/BusActions";
+import {CSVLink} from "react-csv";
+const DataTable = require('react-data-components').DataTable;
 
 let token = null;
 
-class Employee extends Component {
+class Trip extends Component {
     constructor(props) {
         super(props);
+        this.buttonsRender = this.buttonsRender.bind(this);
+        this.buttonsRender2 = this.buttonsRender2.bind(this);
         this.state = {
             update: false,
             add: false,
             buy:false,
             selectedSeat:"Seat Num",
+            sure:false,
+            tripId:null,
+            download:false,
         };
         this.Is_ActiveElement = React.createRef();
         this.DestinationElement = React.createRef();
@@ -75,47 +82,42 @@ class Employee extends Component {
         this.setState({buy: false});
     };
 
+    buttonsRender(id) {
+        return (
+            <ButtonGroup vertical>
+                {(localStorage.getItem("Role")==="Manager")?(
+                    <Button variant="success" onClick={() => {
+                        this.setState({update: true});
+                        this.props.findTrip(token,id);
+                    }}>Update</Button>):null}
+
+                {(localStorage.getItem("Role")==="Manager")?(
+                    <Button variant="danger" disabled={localStorage.getItem("Role")==="User"} onClick={() => {
+                        this.setState({sure: true,tripId:id});
+                    }}>Delete</Button>):null}
+
+                {(localStorage.getItem("Role")==="User")?(
+                    <Button variant="warning"  onClick={async () => {
+                        this.setState({buy: true});
+                        this.props.findTrip(token, id);
+                        this.props.findBusWithTrip(token,id);
+                    }}>Buy</Button>):null}
+            </ButtonGroup>
+        );
+    }
+    buttonsRender2(str) {
+        return (
+            (str===true)?("Active"):("Not Active")
+        );
+    }
+
     componentDidMount() {
         token = localStorage.getItem("token");
         this.props.fetchTrips(token);
     }
 
     render() {
-        const tripList = this.props.tripReducer.Trips.map(trip => {
-                return (
-                    <tr key={trip.Id} className="event__list-item">
-                        <td>{trip.Id}</td>
-                        <td>{(trip.Is_Active?("Active"):("Not Active"))}</td>
-                        <td>{trip.Destination}</td>
-                        <td>{trip.Departure}</td>
-                        <td>{trip.Departure_Time}</td>
-                        <td>{trip.Bus_Id}</td>
-                        <td>{trip.Driver_Id}</td>
-                        <td>{trip.Payment}</td>
-                        <td>
-                            <ButtonGroup vertical>
-                                {(localStorage.getItem("Role")==="Manager")?(
-                                    <Button variant="success" onClick={() => {
-                                    this.setState({update: true});
-                                    this.props.tripReducer.SelectedTrip = trip;
-                                }}>Update</Button>):null}
-                                {(localStorage.getItem("Role")==="Manager")?(
-                                    <Button variant="danger" disabled={localStorage.getItem("Role")==="User"} onClick={() => {
-                                    this.props.deleteTrip(token, trip.Id, this.props.tripReducer.Trips);
-                                }}>Delete</Button>):null}
-                                {(localStorage.getItem("Role")==="User")?(
-                                    <Button variant="warning" disabled={!trip.Is_Active} onClick={() => {
-                                    this.setState({buy: true});
-                                    this.props.tripReducer.SelectedTrip = trip;
-                                    this.props.findBus(token, trip.Bus_Id);
-                                }}>Buy</Button>):null}
-                            </ButtonGroup>
-                        </td>
-                    </tr>
 
-                )
-            }
-        );
         const seatList =(this.props.busReducer.SelectedBus === null)? null: (this.props.busReducer.SelectedBus.Empty_Seats.map(seat => {
             return(
                 <Dropdown.Item eventKey={seat} onClick={() => {
@@ -127,22 +129,31 @@ class Employee extends Component {
 
         return (
             <React.Fragment>
-                <Table responsive striped bordered hover>
-                    <thead>
-                    <tr>
-                        <th>Trip Id</th>
-                        <th>Trip Is_Active</th>
-                        <th>Trip Destination</th>
-                        <th>Trip Departure</th>
-                        <th>Trip Departure_Time</th>
-                        <th>Trip Bus_Id</th>
-                        <th>Trip Driver_Id</th>
-                        <th>Trip Payment</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>{tripList}</tbody>
-                </Table>
+                <DataTable
+                    keys="name4"
+                    columns={[
+                        { title: 'Id', prop: 'Id' },
+                        { title: 'Is_Active', prop: 'Is_Active' ,render: this.buttonsRender2.bind(this)},
+                        { title: 'Destination', prop: 'Destination' },
+                        { title: 'Departure', prop: 'Departure' },
+                        { title: 'Departure_Time', prop: 'Departure_Time' },
+                        { title: 'Bus_Id', prop: 'Bus_Id' },
+                        { title: 'Driver_Id', prop: 'Driver_Id' },
+                        { title: 'Payment', prop: 'Payment' },
+                        { title: '' , prop:'Id',render: this.buttonsRender.bind(this), order:false}
+                    ]}
+                    initialData={this.props.tripReducer.Trips}
+                    initialPageLength={5}
+                    initialSortBy={{ prop: 'Id', order: 'descending' }}
+                    pageLengthOptions={[ 5, 20, 50 ]}
+                />
+
+
+                <Button variant="success" onClick={()=>{this.setState({download:!this.state.download});}}>
+                    Download.CSV
+                </Button>
+                {this.state.download && <CSVLink data={this.props.tripReducer.Trips}  filename="trips.csv">Click Here</CSVLink>}
+
                 {(localStorage.getItem("Role")==="Manager")?(
                 <Button onClick={() => {
                     this.setState({add: true})
@@ -375,6 +386,19 @@ class Employee extends Component {
                         </Button>
                     </Modal.Footer>
                 </Modal>
+
+                <Modal show={this.state.sure}>
+                    <Modal.Header closeButton onClick={()=>{this.setState({sure:false})}}>
+                        <Modal.Title>Deleting Trip</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Are you sure to delete?</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="danger" onClick={()=>{this.setState({sure:false});
+                            this.props.deleteTrip(token,this.state.tripId, this.props.tripReducer.Trips);}}>
+                            Delete
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </React.Fragment>
         );
 
@@ -421,8 +445,11 @@ const mapDispatchToProps = (dispatch) => {
         findBus: (token, id) =>{
             dispatch(findBus(token, id));
         },
+        findBusWithTrip: (token,id) => {
+            dispatch(findBusWithTrip(token,id));
+        }
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Employee);
+export default connect(mapStateToProps, mapDispatchToProps)(Trip);
 

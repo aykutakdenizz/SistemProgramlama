@@ -7,7 +7,7 @@ import Modal from "react-bootstrap/Modal";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import {
     deleteTicket,
-    fetchTicketsWithToken,
+    fetchTicketsWithToken, findTicket,
     setErrorFalseTicket,
     updateTicket
 } from "../Actions/TicketAction";
@@ -15,36 +15,64 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {findTrip, setErrorFalseTrip, setShowFalseTrip} from "../Actions/TripAction";
-import { findBusWithTrip} from "../Actions/BusActions";
+import {findTrip, findTripWithTicket, setErrorFalseTrip, setShowFalseTrip} from "../Actions/TripAction";
+import {findBusWithTicket, findBusWithTrip} from "../Actions/BusActions";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import {CSVLink} from "react-csv";
 
+const DataTable = require('react-data-components').DataTable;
 
 
 let token = null;
 
 class Ticket extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
+        this.buttonsRender = this.buttonsRender.bind(this);
         this.state = {
             update: false,
-            detail:false,
-            selectedSeat:"Seat No",
+            detail: false,
+            selectedSeat: "Seat No",
+            sure: false,
+            ticketId: null,
+            download: false,
         };
-        this.SeatElement = React.createRef();
     }
+
     submitHandler = async (event) => {
         event.preventDefault();
         const ticket = {
             Id: this.props.ticketReducer.SelectedTicket.Id,
-            Trip_Id : this.props.ticketReducer.SelectedTicket.Trip_Id,
-            Seat :this.state.selectedSeat,
-            User_Id:this.props.ticketReducer.SelectedTicket.User_Id,
+            Trip_Id: this.props.ticketReducer.SelectedTicket.Trip_Id,
+            Seat: this.state.selectedSeat,
+            User_Id: this.props.ticketReducer.SelectedTicket.User_Id,
         };
         await this.props.updateTicket(token, ticket, this.props.ticketReducer.Tickets);
         this.setState({update: false});
     };
+
+    buttonsRender(id) {
+        return (
+            <ButtonGroup vertical>
+                <ButtonGroup vertical>
+                    {(localStorage.getItem("Role") === "User") ? (
+                        <Button variant="success" onClick={() => {
+                            this.setState({update: true});
+                            this.props.findTicket(token, id);
+                            this.props.findBusWithTicket(token, id);
+                        }}>Update</Button>) : null}
+                    {(localStorage.getItem("Role") === "User") ? (
+                        <Button variant="danger" onClick={() => {
+                            this.setState({sure: true, ticketId: id});
+                        }}>Delete</Button>) : null}
+                    <Button variant="warning" onClick={async () => {
+                        this.props.findTripWithTicket(token, id);
+                    }}>Detail</Button>
+                </ButtonGroup>
+            </ButtonGroup>
+        );
+    }
 
     componentDidMount() {
         token = localStorage.getItem("token");
@@ -52,38 +80,9 @@ class Ticket extends Component {
     }
 
     render() {
-        const ticketList = this.props.ticketReducer.Tickets.map(ticket => {
-                return (
-                    <tr key={ticket.Id} className="event__list-item">
-                        <td>{ticket.Id}</td>
-                        <td>{ticket.Trip_Id}</td>
-                        <td>{ticket.Seat}</td>
-                        <td>{ticket.User_Id}</td>
-                        <td>
-                            <ButtonGroup vertical>
-                                {(localStorage.getItem("Role")==="User")?(
-                                <Button variant="success" onClick={async () => {
-                                    this.setState({update: true});
-                                    this.props.ticketReducer.SelectedTicket = ticket;
-                                    this.setState({selectedSeat:ticket.Seat});
-                                    this.props.findBusWithTrip(token, ticket.Trip_Id);
-                                }}>Update</Button>):null}
-                                {(localStorage.getItem("Role")==="User")?(
-                                <Button variant="danger" onClick={() => {
-                                    this.props.deleteTicket(token, ticket.Id, this.props.ticketReducer.Tickets);
-                                }}>Delete</Button>):null}
-                                <Button variant="warning" onClick={() => {
-                                    this.props.findTrip(token, ticket.Trip_Id);
-                                }}>Detail</Button>
-                            </ButtonGroup>
-                        </td>
-                    </tr>
 
-                )
-            }
-        );
-        const seatList =(this.props.busReducer.SelectedBus === null)? null: (this.props.busReducer.SelectedBus.Empty_Seats.map(seat => {
-            return(
+        const seatList = (this.props.busReducer.SelectedBus === null) ? null : (this.props.busReducer.SelectedBus.Empty_Seats.map(seat => {
+            return (
                 <Dropdown.Item eventKey={seat} onClick={() => {
                     this.setState({selectedSeat: seat})
                 }}>{seat}</Dropdown.Item>
@@ -92,21 +91,28 @@ class Ticket extends Component {
 
         return (
             <React.Fragment>
-                <Table responsive striped bordered hover>
-                    <thead>
-                    <tr>
-                        <th>Ticket Id</th>
-                        <th>Ticket Trip Id</th>
-                        <th>Seat</th>
-                        <th>Ticket User Id</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>{ticketList}</tbody>
-                </Table>
+                <DataTable
+                    keys="name5"
+                    columns={[
+                        {title: 'Id', prop: 'Id'},
+                        {title: 'Trip_Id', prop: 'Trip_Id'},
+                        {title: 'Seat', prop: 'Seat'},
+                        {title: '', prop: 'Id', render: this.buttonsRender.bind(this), order: false},
+                    ]}
+                    initialData={this.props.ticketReducer.Tickets}
+                    initialPageLength={5}
+                    initialSortBy={{prop: 'Id', order: 'descending'}}
+                    pageLengthOptions={[5, 20, 50]}
+                />
 
 
-
+                <Button variant="success" onClick={() => {
+                    this.setState({download: !this.state.download});
+                }}>
+                    Download.CSV
+                </Button>
+                {this.state.download &&
+                <CSVLink data={this.props.ticketReducer.Tickets} filename="tickets.csv">Click Here</CSVLink>}
 
 
                 <Modal show={this.state.update}>
@@ -137,7 +143,7 @@ class Ticket extends Component {
                                                 <Form.Group controlId="formBasicProjectName">
                                                     <Form.Label>Trip_Id</Form.Label>
                                                     <Form.Control type="text"
-                                                                  placeholder={(this.props.ticketReducer.SelectedTicket===null) ? ("Trip id"):(this.props.ticketReducer.SelectedTicket.Trip_Id)}
+                                                                  placeholder={(this.props.busReducer.Trip_Id === null) ? ("Trip id") : (this.props.busReducer.Trip_Id)}
                                                                   disabled/>
                                                 </Form.Group>
                                             </Col>
@@ -168,13 +174,38 @@ class Ticket extends Component {
                 </Modal>
 
                 <Modal show={this.props.tripReducer.Error || this.props.tripReducer.Show}>
-                    <Modal.Header closeButton onClick={()=>{this.props.setErrorFalseTrip();this.props.setShowFalseTrip();}}>
-                        <Modal.Title>{(this.props.tripReducer.Error) ? ("Uppss, somethings went wrong..."):("Trip Detail")}</Modal.Title>
+                    <Modal.Header closeButton onClick={() => {
+                        this.props.setErrorFalseTrip();
+                        this.props.setShowFalseTrip();
+                    }}>
+                        <Modal.Title>{(this.props.tripReducer.Error) ? ("Uppss, somethings went wrong...") : ("Trip Detail")}</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>{(this.props.tripReducer.Response===null)?null:((this.props.tripReducer.Response.length>0)?(this.props.tripReducer.Response.map(detail =>{return(<tr>{detail}</tr>)})):("Empty"))}</Modal.Body>
+                    <Modal.Body>{(this.props.tripReducer.Response === null) ? null : ((this.props.tripReducer.Response.length > 0) ? (this.props.tripReducer.Response.map(detail => {
+                        return (<tr>{detail}</tr>)
+                    })) : ("Empty"))}</Modal.Body>
                     <Modal.Footer>
-                        <Button variant="primary" onClick={()=>{this.props.setErrorFalseTrip();this.props.setShowFalseTrip();}}>
+                        <Button variant="primary" onClick={() => {
+                            this.props.setErrorFalseTrip();
+                            this.props.setShowFalseTrip();
+                        }}>
                             Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal show={this.state.sure}>
+                    <Modal.Header closeButton onClick={() => {
+                        this.setState({sure: false})
+                    }}>
+                        <Modal.Title>Deleting Ticket</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Are you sure to delete?</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="danger" onClick={() => {
+                            this.setState({sure: false});
+                            this.props.deleteTicket(token, this.state.ticketId, this.props.ticketReducer.Tickets);
+                        }}>
+                            Delete
                         </Button>
                     </Modal.Footer>
                 </Modal>
@@ -198,27 +229,33 @@ const mapDispatchToProps = (dispatch) => {
         fetchTicketsWithToken: (token) => {
             dispatch(fetchTicketsWithToken(token));
         },
-        setErrorFalseTicket:() => {
+        setErrorFalseTicket: () => {
             dispatch(setErrorFalseTicket());
         },
-        deleteTicket:(token, id, tickets) => {
+        deleteTicket: (token, id, tickets) => {
             dispatch(deleteTicket(token, id, tickets));
         },
-        updateTicket: (token, ticket ,tickets) => {
-            dispatch(updateTicket(token, ticket ,tickets));
+        updateTicket: (token, ticket, tickets) => {
+            dispatch(updateTicket(token, ticket, tickets));
+        },
+        findTicket: (token, id) => {
+            dispatch(findTicket(token, id));
         },
         findTrip: (token, tripId) => {
             dispatch(findTrip(token, tripId));
         },
-        setShowFalseTrip:() => {
+        setShowFalseTrip: () => {
             dispatch(setShowFalseTrip());
         },
-        setErrorFalseTrip:() => {
+        setErrorFalseTrip: () => {
             dispatch(setErrorFalseTrip());
         },
-        findBusWithTrip: (token, id) =>{
-            dispatch(findBusWithTrip(token, id));
+        findBusWithTicket: (token, id) => {
+            dispatch(findBusWithTicket(token, id));
         },
+        findTripWithTicket: (token, id) => {
+            dispatch(findTripWithTicket(token, id));
+        }
     };
 };
 

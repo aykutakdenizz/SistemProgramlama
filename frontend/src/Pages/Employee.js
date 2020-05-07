@@ -17,15 +17,28 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
+import {CSVLink, CSVDownload} from "react-csv";
+const DataTable = require('react-data-components').DataTable;
+
 
 let token = null;
+const headers = [
+    { label: 'Id', key: 'Id' },
+    { label: 'Name', key: 'Name' },
+    { label: 'Surname', key: 'Surname' },
+    { label: 'Address', key: 'Address' },
+];
 
 class Employee extends Component {
     constructor(props){
         super(props);
+        this.buttonsRender = this.buttonsRender.bind(this);
         this.state = {
             update: false,
             add:false,
+            sure:false,
+            employeeId:null,
+            download:false
         };
         this.EmployeeNameElement = React.createRef();
         this.EmployeeSurnameElement = React.createRef();
@@ -52,57 +65,52 @@ class Employee extends Component {
         this.props.addEmployee(token,employee,this.props.employeeReducer.Employees);
         this.setState({add: false});
     };
+    buttonsRender(id) {
+        return (
+            <ButtonGroup vertical>
+                {(localStorage.getItem("Role")==="Manager")?(
+                    <Button variant="success" onClick={()=>{
+                        this.setState({update:true});
+                        this.props.findEmployee(token,id);
+                    }}>Update</Button>):null}
+                {(localStorage.getItem("Role")==="Manager")?(
+                    <Button variant="danger" onClick={()=>{
+                        this.setState({sure:true,employeeId:id});
+                    }}>Delete</Button>):null}
+                {(localStorage.getItem("Role")==="User")?("No permission"):null}
+            </ButtonGroup>
+        );
+    }
     componentDidMount() {
         token = localStorage.getItem("token");
         this.props.fetchEmployees(token);
     }
 
     render() {
-        const employeeList = this.props.employeeReducer.Employees.map(employee => {
-                return (
-                    <tr key={employee.Id} className="event__list-item">
-                        <td>{employee.Id}</td>
-                        <td>{employee.Name}</td>
-                        <td>{employee.Surname}</td>
-                        <td>{employee.Address}</td>
-                        <td>
-                            <ButtonGroup vertical>
-                                {(localStorage.getItem("Role")==="Manager")?(
-                                <Button variant="success" onClick={()=>{
-                                    this.setState({update:true});
-                                    this.props.employeeReducer.SelectedEmployee = employee;
-                                }}>Update</Button>):null}
-                                {(localStorage.getItem("Role")==="Manager")?(
-                                <Button variant="danger" onClick={()=>{
-                                    this.props.deleteEmployee(token,employee.Id, this.props.employeeReducer.Employees);
-                                }}>Delete</Button>):null}
-                                {(localStorage.getItem("Role")==="User")?("No permission"):null}
-                            </ButtonGroup>
-                        </td>
-                    </tr>
-
-                )
-            }
-        );
         return (
             <React.Fragment>
-                <Table responsive striped bordered hover>
-                    <thead>
-                    <tr>
-                        <th>Employee Id</th>
-                        <th>Employee Name</th>
-                        <th>Employee Surname</th>
-                        <th>Employee Address</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>{employeeList}</tbody>
-                </Table>
+                <DataTable
+                    keys="name2"
+                    columns={[
+                        { title: 'Id', prop: 'Id' },
+                        { title: 'Name', prop: 'Name' },
+                        { title: 'Surname', prop: 'Surname' },
+                        { title: 'Address', prop: 'Address' },
+                        { title: '' , prop:'Id',render: this.buttonsRender.bind(this), order:false}
+                    ]}
+                    initialData={this.props.employeeReducer.Employees}
+                    initialPageLength={5}
+                    initialSortBy={{ prop: 'Id', order: 'descending' }}
+                    pageLengthOptions={[ 5, 20, 50 ]}
+                />
+
                 {(localStorage.getItem("Role")==="Manager")?(
-                <Button onClick={() => {this.setState({add: true})}}>ADD NEW EMPLOYEE</Button>):null}
+                    <Button onClick={() => {this.setState({add: true})}}>ADD NEW EMPLOYEE</Button>):null}
 
-
-
+                <Button variant="success" onClick={()=>{this.setState({download:!this.state.download});}}>
+                    Download .CSV
+                </Button>
+                {this.state.download && <CSVLink data={this.props.employeeReducer.Employees} headers={headers} filename="employees.csv">Click Here</CSVLink>}
 
                 <Modal show={this.state.update}>
                     <Modal.Header closeButton onClick={() => {
@@ -212,6 +220,19 @@ class Employee extends Component {
                     <Modal.Footer>
                         <Button variant="danger" onClick={this.props.setErrorFalseEmployee}>
                             Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal show={this.state.sure}>
+                    <Modal.Header closeButton onClick={()=>{this.setState({sure:false})}}>
+                        <Modal.Title>Deleting Employee</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Are you sure to delete?</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="danger" onClick={()=>{this.setState({sure:false});
+                            this.props.deleteEmployee(token,this.state.employeeId, this.props.employeeReducer.Employees);}}>
+                            Delete
                         </Button>
                     </Modal.Footer>
                 </Modal>

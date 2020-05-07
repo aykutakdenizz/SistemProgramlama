@@ -11,6 +11,7 @@ router.post('/deleteTrip',checkAuthManager,TripController.deleteTrip);
 router.post('/updateTrip',checkAuthManager,TripController.updateTrip);
 
 router.post('/findTrip',checkAuth,TripController.findTrip);
+router.post('/findTripWithTicket',checkAuth,TripController.findTripWithTicket);
 router.get('/getTrips',checkAuth,TripController.getTrips);
 
 

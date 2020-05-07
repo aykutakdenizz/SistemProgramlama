@@ -1,5 +1,8 @@
 const Bus = require('../Models/Bus');
 const Trip = require('../Models/Trip');
+const Ticket = require('../Models/Ticket');
+
+
 exports.addBus = (req, res, next) => {
     if (req.body.Plate == null || req.body.Seat_Plan == null || req.body.Empty_Seats == null) {
         return res.status(404).json({
@@ -102,42 +105,100 @@ exports.findBus = (req, res, next) => {
         });
     });
 };
+exports.findBusWithTicket = (req, res, next) => {
+    if (req.body.Ticket_Id == null) {
+        return res.status(404).json({
+            Error: 'Values/Value missing when finding bus!'
+        });
+    }
+    Ticket.findOne({
+        where: {
+            Id: req.body.Ticket_Id,
+        }
+    }).then(ticket => {
+        Trip.findOne({
+            where: {
+                Id: ticket.Trip_Id,
+            }
+        }).then(trip => {
+            if (trip !== null) {
+                Bus.findOne({
+                    where: {
+                        Id: trip.Bus_Id,
+                    }
+                }).then(result => {
+                        return res.status(200).json({
+                            Bus: result,
+                            Trip_Id: trip.Id
+                        })
+                    }
+                ).catch(err => {
+                    return res.status(500).json({
+                        Error: 'Bus can not find (invalid bus id)!! => ERR:' + err
+                    });
+                });
+            } else {
+                return res.status(500).json({
+                    Error: 'This Trip invalid so there is no bus !! => ERR:' + err
+                });
+            }
+        }).catch(err => {
+            return res.status(500).json({
+                Error: 'This Trip invalid so there is no bus !! => ERR:' + err
+            });
+        });
+    }).catch(err => {
+            return res.status(500).json({
+                Error: 'This Ticket invalid so there is no bus !! => ERR:' + err
+            });
+        }
+    );
+
+};
+
 exports.findBusWithTrip = (req, res, next) => {
     if (req.body.Trip_Id == null) {
         return res.status(404).json({
             Error: 'Values/Value missing when finding bus!'
         });
     }
+
     Trip.findOne({
         where: {
             Id: req.body.Trip_Id,
         }
     }).then(trip => {
-        if(trip!==null){
+        if (trip !== null) {
             Bus.findOne({
                 where: {
                     Id: trip.Bus_Id,
                 }
-            }).then(result =>
-                res.status(200).json({
-                    Bus: result
-                })
+            }).then(result => {
+                    return res.status(200).json({
+                        Bus: result,
+                        Trip_Id: trip.Id
+                    })
+                }
             ).catch(err => {
-                res.status(500).json({
+                return res.status(500).json({
                     Error: 'Bus can not find (invalid bus id)!! => ERR:' + err
                 });
             });
-        }else{
+        } else {
             return res.status(500).json({
                 Error: 'This Trip invalid so there is no bus !! => ERR:' + err
             });
         }
     }).catch(err => {
-        res.status(500).json({
+        return res.status(500).json({
             Error: 'This Trip invalid so there is no bus !! => ERR:' + err
         });
     });
+
+
 };
+
+
 exports.getBuses = (req, res, next) => {
     Bus.findAll()
         .then(result => {

@@ -5,6 +5,7 @@ const initialBus = {
     SelectedBus : null,
     Response: "...",
     Error: false,
+    Trip_Id:null,
 };
 
 const BusReducer = (state= initialBus, action) => {
@@ -49,12 +50,22 @@ const BusReducer = (state= initialBus, action) => {
                 Response: action.payload.Response
             };
             break;
+        case "FIND_BUS_WITH_TICKET":
+            state = {
+                ...state,
+                SelectedBus: action.payload.FindBus,
+                Error: action.payload.Error,
+                Response: action.payload.Response,
+                Trip_Id :action.payload.Trip_Id,
+            };
+            break;
         case "FIND_BUS_WITH_TRIP":
             state = {
                 ...state,
                 SelectedBus: action.payload.FindBus,
                 Error: action.payload.Error,
-                Response: action.payload.Response
+                Response: action.payload.Response,
+                Trip_Id :action.payload.Trip_Id,
             };
             break;
         case "setErrorFalseBus":

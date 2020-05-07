@@ -5,7 +5,6 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import {
     deleteUser,
-    fetchUsers,
     findUser,
     getUsersWithToken,
     setErrorFalseUser,
@@ -17,15 +16,27 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import {CSVLink} from "react-csv";
+const DataTable = require('react-data-components').DataTable;
 
 let token = null;
+const headers = [
+    { label: 'Id', key: 'Id' },
+    { label: 'Name', key: 'Name' },
+    { label: 'Surname', key: 'Surname' },
+    { label: 'Real_Name', key: 'Real_Name' },
+];
 
 class User extends Component {
     constructor(props) {
         super(props);
+        this.buttonsRender = this.buttonsRender.bind(this);
         this.state = {
             update: false,
             add: false,
+            sure:false,
+            userId:null,
+            download:false
         };
         this.UserNameElement = React.createRef();
         this.UserSurnameElement = React.createRef();
@@ -48,54 +59,51 @@ class User extends Component {
         this.setState({update: false});
     };
 
+    buttonsRender(id) {
+        return (
+            <ButtonGroup vertical>
+                {(localStorage.getItem("Role")==="Manager")?(
+                    <Button variant="success" onClick={() => {
+                        this.setState({update: true});
+                        this.props.findUser(token,id);
+                    }}>Update</Button>):null}
+                {(localStorage.getItem("Role")==="Manager")?(
+                    <Button variant="danger" onClick={() => {
+                        this.setState({sure: true,userId:id});
+                    }}>Delete</Button>):null}
+                {(localStorage.getItem("Role")==="User")?("No permission"):null}
+            </ButtonGroup>
+        );
+    }
+
     componentDidMount() {
         token = localStorage.getItem("token");
         this.props.getUsersWithToken(token);
     }
 
     render() {
-        const userList = this.props.userReducer.Users.map(user => {
-                return (
-                    <tr key={user.Id} className="event__list-item">
-                        <td>{user.Id}</td>
-                        <td>{user.Name}</td>
-                        <td>{user.Real_Name}</td>
-                        <td>{user.Surname}</td>
-                        <td>{user.Money}</td>
-                        <td>
-                            <ButtonGroup vertical>
-                                {(localStorage.getItem("Role")==="Manager")?(
-                                <Button variant="success" onClick={() => {
-                                    this.setState({update: true});
-                                    this.props.userReducer.SelectedUser = user;
-                                }}>Update</Button>):null}
-                                {(localStorage.getItem("Role")==="Manager")?(
-                                <Button variant="danger" onClick={() => {
-                                    this.props.deleteUser(token, user.Id, this.props.userReducer.Users);
-                                }}>Delete</Button>):null}
-                                {(localStorage.getItem("Role")==="User")?("No permission"):null}
-                            </ButtonGroup>
-                        </td>
-                    </tr>
-
-                )
-            }
-        );
         return (
             <React.Fragment>
-                <Table responsive striped bordered hover>
-                    <thead>
-                    <tr>
-                        <th>User Id</th>
-                        <th>User Name</th>
-                        <th>User Real_Name</th>
-                        <th>User Surname</th>
-                        <th>User Money</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>{userList}</tbody>
-                </Table>
+                <DataTable
+                    keys="name3"
+                    columns={[
+                        { title: 'Id', prop: 'Id' },
+                        { title: 'Name', prop: 'Name' },
+                        { title: 'Real_Name', prop: 'Real_Name' },
+                        { title: 'Surname', prop: 'Surname' },
+                        { title: 'Money', prop: 'Money' },
+                        { title: '' , prop:'Id',render: this.buttonsRender.bind(this), order:false}
+                    ]}
+                    initialData={this.props.userReducer.Users}
+                    initialPageLength={5}
+                    initialSortBy={{ prop: 'Id', order: 'descending' }}
+                    pageLengthOptions={[ 5, 20, 50 ]}
+                />
+
+                <Button variant="success" onClick={()=>{this.setState({download:!this.state.download});}}>
+                    Download.CSV
+                </Button>
+                {this.state.download && <CSVLink data={this.props.userReducer.Users} headers={headers} filename="users.csv">Click Here</CSVLink>}
 
 
                 <Modal show={this.state.update}>
@@ -173,6 +181,19 @@ class User extends Component {
                     <Modal.Footer>
                         <Button variant="danger" onClick={this.props.setErrorFalseUser}>
                             Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal show={this.state.sure}>
+                    <Modal.Header closeButton onClick={()=>{this.setState({sure:false})}}>
+                        <Modal.Title>Deleting Ticket</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Are you sure to delete?</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="danger" onClick={()=>{this.setState({sure:false});
+                            this.props.deleteUser(token, this.state.userId, this.props.userReducer.Users);}}>
+                            Delete
                         </Button>
                     </Modal.Footer>
                 </Modal>
