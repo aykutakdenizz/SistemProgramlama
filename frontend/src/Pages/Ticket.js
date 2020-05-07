@@ -16,6 +16,9 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {findTrip, setErrorFalseTrip, setShowFalseTrip} from "../Actions/TripAction";
+import { findBusWithTrip} from "../Actions/BusActions";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
 
 
 
@@ -27,6 +30,7 @@ class Ticket extends Component {
         this.state = {
             update: false,
             detail:false,
+            selectedSeat:"Seat No",
         };
         this.SeatElement = React.createRef();
     }
@@ -35,7 +39,7 @@ class Ticket extends Component {
         const ticket = {
             Id: this.props.ticketReducer.SelectedTicket.Id,
             Trip_Id : this.props.ticketReducer.SelectedTicket.Trip_Id,
-            Seat :(this.SeatElement.current.value ==="") ? (this.props.ticketReducer.SelectedTicket.Seat):(this.SeatElement.current.value),
+            Seat :this.state.selectedSeat,
             User_Id:this.props.ticketReducer.SelectedTicket.User_Id,
         };
         await this.props.updateTicket(token, ticket, this.props.ticketReducer.Tickets);
@@ -58,9 +62,11 @@ class Ticket extends Component {
                         <td>
                             <ButtonGroup vertical>
                                 {(localStorage.getItem("Role")==="User")?(
-                                <Button variant="success" onClick={() => {
+                                <Button variant="success" onClick={async () => {
                                     this.setState({update: true});
                                     this.props.ticketReducer.SelectedTicket = ticket;
+                                    this.setState({selectedSeat:ticket.Seat});
+                                    this.props.findBusWithTrip(token, ticket.Trip_Id);
                                 }}>Update</Button>):null}
                                 {(localStorage.getItem("Role")==="User")?(
                                 <Button variant="danger" onClick={() => {
@@ -76,6 +82,14 @@ class Ticket extends Component {
                 )
             }
         );
+        const seatList =(this.props.busReducer.SelectedBus === null)? null: (this.props.busReducer.SelectedBus.Empty_Seats.map(seat => {
+            return(
+                <Dropdown.Item eventKey={seat} onClick={() => {
+                    this.setState({selectedSeat: seat})
+                }}>{seat}</Dropdown.Item>
+            );
+        }));
+
         return (
             <React.Fragment>
                 <Table responsive striped bordered hover>
@@ -111,9 +125,12 @@ class Ticket extends Component {
                                             <Col md="auto">
                                                 <Form.Group controlId="formBasicProjectName">
                                                     <Form.Label>New Seat</Form.Label>
-                                                    <Form.Control type="text"
-                                                                  placeholder={(this.props.ticketReducer.SelectedTicket===null) ? ("Please enter plate"):(this.props.ticketReducer.SelectedTicket.Seat)}
-                                                                  ref={this.SeatElement}/>
+                                                    <DropdownButton
+                                                        alignRight
+                                                        title={this.state.selectedSeat}
+                                                        id="dropdown-menu-align-right">
+                                                        {seatList}
+                                                    </DropdownButton>
                                                 </Form.Group>
                                             </Col>
                                             <Col md="auto">
@@ -172,6 +189,7 @@ const mapStateToProps = (state) => {
     return {
         tripReducer: state.tripReducer,
         ticketReducer: state.ticketReducer,
+        busReducer: state.busReducer,
     };
 };
 
@@ -197,7 +215,10 @@ const mapDispatchToProps = (dispatch) => {
         },
         setErrorFalseTrip:() => {
             dispatch(setErrorFalseTrip());
-        }
+        },
+        findBusWithTrip: (token, id) =>{
+            dispatch(findBusWithTrip(token, id));
+        },
     };
 };
 

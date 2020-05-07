@@ -16,6 +16,14 @@ const UserReducer = (state = initialUser, action) => {
                 Response: action.payload.Response,
             };
             break;
+        case "FETCH_USER_WITH_TOKEN":
+            state = {
+                ...state,
+                Users: action.payload.Users,
+                Error: action.payload.Error,
+                Response: action.payload.Response,
+            };
+            break;
         case "UPDATE_USER":
             state = {
                 ...state,

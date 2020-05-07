@@ -7,6 +7,7 @@ router.post('/deleteUser',checkAuthManager,UserController.deleteUser);
 router.post('/updateUser',checkAuthManager,UserController.updateUser);
 
 router.post('/findUser',checkAuth,UserController.findUser);
+router.post('/getUsersWithToken',checkAuth,UserController.getUsersWithToken);
 router.get('/getUsers',checkAuthManager,UserController.getUsers);
 
 

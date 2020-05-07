@@ -204,6 +204,44 @@ export function findBus(token, busId) {
     };
 }
 
+export function findBusWithTrip(token, tripId) {
+    return async dispatch => {
+        let selected_bus = null;
+        let response = "..";
+        let error = false;
+        await fetch('http://localhost:8000/bus/findBusWithTrip', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
+            },
+            body: '{"Trip_Id":' + tripId + '}'
+        }).then(res => {
+            if (res.status !== 200 && res.status !== 201) {
+                error = true;
+            }
+            return res.json();
+        }).then(resData => {
+            if(!error){
+                selected_bus = resData.Bus;
+            }else{
+                response = resData.Error;
+            }
+        }).catch(err => {
+            console.log(err);
+        });
+
+        dispatch({
+            type: "FIND_BUS_WITH_TRIP",
+            payload: {
+                FindBus: selected_bus,
+                Response: response,
+                Error: error,
+            }
+        });
+    };
+}
+
 export function setErrorFalseBus() {
     return async dispatch => {
         dispatch({

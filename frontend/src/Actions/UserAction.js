@@ -39,6 +39,52 @@ export function fetchUsers(token) {
     };
 }
 
+export function getUsersWithToken(token) {
+    return async dispatch => {
+        let users = [];
+        let response = "..";
+        let error = false;
+        await fetch('http://localhost:8000/user/getUsersWithToken', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: '{"Token":"' + token + '"}',
+        }).then(res => {
+            if (res.status !== 200 && res.status !== 201) {
+                error = true;
+            }
+            return res.json();
+        }).then(resData => {
+            if(!error){
+                const s = resData.User;
+                if(s.length===undefined){
+                    users.push(resData.User);
+                }else{
+                    for (let i = 0; i < s.length; i++) {
+                        let user = s[i];
+                        users.push(user);
+                    }
+                }
+            }else{
+                response=resData.Error;
+            }
+        }).catch(err => {
+            console.log(err);
+        });
+
+        dispatch({
+            type: "FETCH_USER_WITH_TOKEN",
+            payload: {
+                Users: users,
+                Response: response,
+                Error: error,
+            }
+        });
+    };
+}
+
 export function updateUser(token, user, users) {
     return async dispatch => {
         let new_users = [];

@@ -9,6 +9,7 @@ router.post('/deleteBus',checkAuthManager,BusController.deleteBus);
 router.post('/updateBus',checkAuthManager,BusController.updateBus);
 
 router.post('/findBus',checkAuth,BusController.findBus);
+router.post('/findBusWithTrip',checkAuth,BusController.findBusWithTrip);
 router.get('/getBuses',checkAuth,BusController.getBuses);
 
 

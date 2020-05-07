@@ -49,6 +49,14 @@ const BusReducer = (state= initialBus, action) => {
                 Response: action.payload.Response
             };
             break;
+        case "FIND_BUS_WITH_TRIP":
+            state = {
+                ...state,
+                SelectedBus: action.payload.FindBus,
+                Error: action.payload.Error,
+                Response: action.payload.Response
+            };
+            break;
         case "setErrorFalseBus":
             state = {
                 ...state,

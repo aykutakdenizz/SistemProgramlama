@@ -19,7 +19,6 @@ class SignUp extends Component {
         };
         this.NameElement = React.createRef();
         this.PasswordElement = React.createRef();
-        //this.RoleElement = React.createRef();
         this.Real_NameElement = React.createRef();
         this.SurnameElement = React.createRef();
         this.MasterNameElement = React.createRef();

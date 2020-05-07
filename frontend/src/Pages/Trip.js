@@ -11,6 +11,9 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {addTicket, setErrorFalseTicket, setSuccessFalseTicket} from "../Actions/TicketAction";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import { findBus} from "../Actions/BusActions";
 
 let token = null;
 
@@ -21,6 +24,7 @@ class Employee extends Component {
             update: false,
             add: false,
             buy:false,
+            selectedSeat:"Seat Num",
         };
         this.Is_ActiveElement = React.createRef();
         this.DestinationElement = React.createRef();
@@ -29,7 +33,6 @@ class Employee extends Component {
         this.Bus_IdElement = React.createRef();
         this.Driver_IdElement = React.createRef();
         this.PaymentElement = React.createRef();
-        this.SeatElement = React.createRef();
     }
 
     submitHandler = async (event) => {
@@ -66,7 +69,7 @@ class Employee extends Component {
         event.preventDefault();
         const ticket = {
             Trip_Id: this.props.tripReducer.SelectedTrip.Id,
-            Seat:(this.SeatElement.current.value === "") ? null : (this.SeatElement.current.value),
+            Seat:this.state.selectedSeat,
         };
         this.props.addTicket(token, ticket, this.props.ticketReducer.Tickets);
         this.setState({buy: false});
@@ -104,6 +107,7 @@ class Employee extends Component {
                                     <Button variant="warning" disabled={!trip.Is_Active} onClick={() => {
                                     this.setState({buy: true});
                                     this.props.tripReducer.SelectedTrip = trip;
+                                    this.props.findBus(token, trip.Bus_Id);
                                 }}>Buy</Button>):null}
                             </ButtonGroup>
                         </td>
@@ -112,6 +116,15 @@ class Employee extends Component {
                 )
             }
         );
+        const seatList =(this.props.busReducer.SelectedBus === null)? null: (this.props.busReducer.SelectedBus.Empty_Seats.map(seat => {
+            return(
+                <Dropdown.Item eventKey={seat} onClick={() => {
+                    this.setState({selectedSeat: seat})
+                }}>{seat}</Dropdown.Item>
+            );
+        }));
+
+
         return (
             <React.Fragment>
                 <Table responsive striped bordered hover>
@@ -317,9 +330,12 @@ class Employee extends Component {
                                             <Col md="auto">
                                                 <Form.Group controlId="formBasicProjectName">
                                                     <Form.Label>Seat</Form.Label>
-                                                    <Form.Control type="text"
-                                                                  placeholder="Please enter seat"
-                                                                  ref={this.SeatElement}/>
+                                                    <DropdownButton
+                                                        alignRight
+                                                        title={this.state.selectedSeat}
+                                                        id="dropdown-menu-align-right">
+                                                        {seatList}
+                                                    </DropdownButton>
                                                 </Form.Group>
                                             </Col>
                                         </Row>
@@ -369,6 +385,7 @@ const mapStateToProps = (state) => {
     return {
         tripReducer: state.tripReducer,
         ticketReducer: state.ticketReducer,
+        busReducer: state.busReducer,
     };
 };
 
@@ -400,7 +417,10 @@ const mapDispatchToProps = (dispatch) => {
         },
         setErrorFalseTicket:() => {
             dispatch(setErrorFalseTicket());
-        }
+        },
+        findBus: (token, id) =>{
+            dispatch(findBus(token, id));
+        },
     };
 };
 

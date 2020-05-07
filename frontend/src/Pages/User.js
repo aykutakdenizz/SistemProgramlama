@@ -3,7 +3,14 @@ import {connect} from "react-redux";
 
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
-import {deleteUser, fetchUsers, findUser, setErrorFalseUser, updateUser} from "../Actions/UserAction";
+import {
+    deleteUser,
+    fetchUsers,
+    findUser,
+    getUsersWithToken,
+    setErrorFalseUser,
+    updateUser
+} from "../Actions/UserAction";
 import Modal from "react-bootstrap/Modal";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Card from "react-bootstrap/Card";
@@ -43,7 +50,7 @@ class User extends Component {
 
     componentDidMount() {
         token = localStorage.getItem("token");
-        this.props.fetchUsers(token);
+        this.props.getUsersWithToken(token);
     }
 
     render() {
@@ -57,13 +64,16 @@ class User extends Component {
                         <td>{user.Money}</td>
                         <td>
                             <ButtonGroup vertical>
+                                {(localStorage.getItem("Role")==="Manager")?(
                                 <Button variant="success" onClick={() => {
                                     this.setState({update: true});
                                     this.props.userReducer.SelectedUser = user;
-                                }}>Update</Button>
+                                }}>Update</Button>):null}
+                                {(localStorage.getItem("Role")==="Manager")?(
                                 <Button variant="danger" onClick={() => {
                                     this.props.deleteUser(token, user.Id, this.props.userReducer.Users);
-                                }}>Delete</Button>
+                                }}>Delete</Button>):null}
+                                {(localStorage.getItem("Role")==="User")?("No permission"):null}
                             </ButtonGroup>
                         </td>
                     </tr>
@@ -138,7 +148,7 @@ class User extends Component {
                                                     <Form.Label>User Money</Form.Label>
                                                     <Form.Control type="text"
                                                                   placeholder={(this.props.userReducer.SelectedUser === null) ? ("Please enter money") : (this.props.userReducer.SelectedUser.Money)}
-                                                                  ref={this.UserPasswordElement}/>
+                                                                  ref={this.UserMoneyElement}/>
                                                 </Form.Group>
                                             </Col>
                                         </Row>
@@ -180,8 +190,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchUsers: (token) => {
-            dispatch(fetchUsers(token));
+        getUsersWithToken: (token) => {
+            dispatch(getUsersWithToken(token));
         },
         updateUser: (token, user, users) => {
             dispatch(updateUser(token, user, users));

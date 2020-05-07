@@ -14,8 +14,7 @@ import HomePage from "./Pages/HomePage";
 import Ticket from "./Pages/Ticket";
 import SignUp from "./Pages/SignUp";
 
-/*import { Redirect } from 'react-router-dom'
-function funcLogin() {return <Redirect to='/Login' /> ;}*/
+
 function App() {
     return (
         <BrowserRouter>
