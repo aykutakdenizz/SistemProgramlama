@@ -151,7 +151,7 @@ class Manager extends Component {
                     </Modal.Header>
                     <Modal.Body>{this.props.managerReducer.Response}</Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.props.setErrorFalseManager}>
+                        <Button variant="danger" onClick={this.props.setErrorFalseManager}>
                             Close
                         </Button>
                     </Modal.Footer>

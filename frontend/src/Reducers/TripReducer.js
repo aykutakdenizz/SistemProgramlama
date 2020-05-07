@@ -3,8 +3,9 @@ const initialTrip = {
     Trips: [],
     FindTrip: null,
     SelectedTrip : null,
+    Show:false,
     Error: false,
-    Response: "...",
+    Response: [],
 };
 
 const TripReducer = (state= initialTrip, action) => {
@@ -47,12 +48,20 @@ const TripReducer = (state= initialTrip, action) => {
                 SelectedTrip: action.payload.FindTrip,
                 Error: action.payload.Error,
                 Response: action.payload.Response,
+                Show: action.payload.Show,
             };
             break;
         case "setErrorFalseTrip":
             state = {
                 ...state,
                 Error: action.payload.Error,
+                Response: action.payload.Response
+            };
+            break;
+        case "setShowFalseTrip":
+            state = {
+                ...state,
+                Show: action.payload.Show,
                 Response: action.payload.Response
             };
             break;

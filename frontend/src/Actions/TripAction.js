@@ -1,7 +1,7 @@
 export function fetchTrips(token) {
     return async dispatch => {
         let trips = [];
-        let response = "..";
+        let response = [];
         let error = false;
         await fetch('http://localhost:8000/trip/getTrips', {
             method: 'GET',
@@ -22,7 +22,7 @@ export function fetchTrips(token) {
                     trips.push(trip);
                 }
             }else{
-                response = resData.Error;
+                response.push(resData.Error);
             }
 
         }).catch(err => {
@@ -42,7 +42,7 @@ export function fetchTrips(token) {
 export function addTrip(token, trip, trips) {
     return async dispatch => {
         let new_trips = [];
-        let response = "..";
+        let response = [];
         let error = false;
         await fetch('http://localhost:8000/trip/addTrip', {
             method: 'POST',
@@ -63,7 +63,7 @@ export function addTrip(token, trip, trips) {
                 });
                 new_trips.push(resData.Trip);
             }else{
-                response = resData.Error;
+                response.push(resData.Error);
             }
 
         }).catch(err => {
@@ -83,7 +83,7 @@ export function addTrip(token, trip, trips) {
 export function updateTrip(token, trip, trips) {
     return async dispatch => {
         let new_trips = [];
-        let response = "..";
+        let response = [];
         let error = false;
         await fetch('http://localhost:8000/trip/updateTrip', {
             method: 'POST',
@@ -108,7 +108,7 @@ export function updateTrip(token, trip, trips) {
                     new_trips.push(resData.Trip);
                 }
             }else{
-                response = resData.Error;
+                response.push(resData.Error);
             }
 
         }).catch(err => {
@@ -129,7 +129,7 @@ export function updateTrip(token, trip, trips) {
 export function deleteTrip(token, tripId, trips) {
     return async dispatch => {
         let new_trips = [];
-        let response = "..";
+        let response = [];
         let error = false;
         await fetch('http://localhost:8000/trip/deleteTrip', {
             method: 'POST',
@@ -151,7 +151,7 @@ export function deleteTrip(token, tripId, trips) {
                     }
                 });
             }else{
-                response = resData.Error;
+                response.push(resData.Error);
             }
 
         }).catch(err => {
@@ -171,8 +171,9 @@ export function deleteTrip(token, tripId, trips) {
 export function findTrip(token, tripId) {
     return async dispatch => {
         let selected_trip = null;
-        let response = "..";
+        let response = [];
         let error = false;
+        let show = false;
         await fetch('http://localhost:8000/trip/findTrip', {
             method: 'POST',
             headers: {
@@ -188,8 +189,15 @@ export function findTrip(token, tripId) {
         }).then(resData => {
             if(!error){
                 selected_trip = resData.Trip;
+                response.push("Destination:"+selected_trip.Destination);
+                response.push("Departure:"+selected_trip.Departure);
+                response.push( "Departure Time:"+selected_trip.Departure_Time);
+                response.push("Bus Id:"+selected_trip.Bus_Id);
+                response.push("Driver Id:"+selected_trip.Driver_Id);
+                response.push("Payment:"+selected_trip.Payment);
+                show = true;
             }else{
-                response = resData.Error;
+                response.push(resData.Error);
             }
 
         }).catch(err => {
@@ -202,6 +210,7 @@ export function findTrip(token, tripId) {
                 FindTrip: selected_trip,
                 Response: response,
                 Error: error,
+                Show: show,
             }
         });
     };
@@ -212,8 +221,20 @@ export function setErrorFalseTrip() {
         dispatch({
             type: "setErrorFalseTrip",
             payload: {
-                Response: "...",
+                Response: [],
                 Error:false
+            }
+        });
+    };
+}
+
+export function setShowFalseTrip() {
+    return async dispatch => {
+        dispatch({
+            type: "setShowFalseTrip",
+            payload: {
+                Response: [],
+                Show:false
             }
         });
     };

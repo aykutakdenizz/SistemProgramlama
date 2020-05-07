@@ -3,6 +3,7 @@ const initialTicket = {
     Tickets: [],
     User:null,
     SelectedTicket : null,
+    Success:false,
     Error: false,
     Response: "...",
 };
@@ -17,7 +18,7 @@ const TicketReducer = (state= initialTicket, action) => {
                 Response: action.payload.Response,
             };
             break;
-        case "FETCH_USER_TICKET":
+        case "FETCH_TICKET_with_token":
             state = {
                 ...state,
                 Tickets: action.payload.Tickets,
@@ -31,6 +32,7 @@ const TicketReducer = (state= initialTicket, action) => {
                 Tickets: action.payload.Tickets,
                 Error: action.payload.Error,
                 Response: action.payload.Response,
+                Success: action.payload.Success,
             };
             break;
         case "UPDATE_TICKET":
@@ -61,6 +63,13 @@ const TicketReducer = (state= initialTicket, action) => {
             state = {
                 ...state,
                 Error: action.payload.Error,
+                Response: action.payload.Response
+            };
+            break;
+        case "setSuccessFalseTicket":
+            state = {
+                ...state,
+                Success: action.payload.Success,
                 Response: action.payload.Response
             };
             break;

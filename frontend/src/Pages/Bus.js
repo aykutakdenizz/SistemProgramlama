@@ -64,16 +64,21 @@ class Bus extends Component {
                         <td>{bus.Id}</td>
                         <td>{bus.Plate}</td>
                         <td>{bus.Seat_Plan}</td>
-                        <td>{bus.Empty_Seats}</td>
+                        <td>{(bus.Empty_Seats===null)?("No Seat"):((bus.Empty_Seats.length>0)?
+                            (bus.Empty_Seats.map(detail =>{return(detail+" ")})):("No Seat"))}
+                        </td>
                         <td>
                             <ButtonGroup vertical>
+                                {(localStorage.getItem("Role")==="Manager")?(
                                 <Button variant="success" onClick={()=>{
                                     this.setState({update:true});
                                     this.props.busReducer.SelectedBus = bus;
-                                }}>Update</Button>
+                                }}>Update</Button>):null}
+                                {(localStorage.getItem("Role")==="Manager")?(
                                 <Button variant="danger" onClick={()=>{
                                     this.props.deleteBus(token,bus.Id, this.props.busReducer.Buses);
-                                }}>Delete</Button>
+                                }}>Delete</Button>):null}
+                                {(localStorage.getItem("Role")==="User")?("No permission"):null}
                             </ButtonGroup>
                         </td>
                     </tr>
@@ -95,7 +100,8 @@ class Bus extends Component {
                     </thead>
                     <tbody>{busList}</tbody>
                 </Table>
-                <Button onClick={() => {this.setState({add: true})}} >ADD NEW BUS</Button>
+                {(localStorage.getItem("Role")==="Manager")?(
+                <Button onClick={() => {this.setState({add: true})}} >ADD NEW BUS</Button>):null}
 
 
                 <Modal show={this.state.update}>
@@ -205,7 +211,7 @@ class Bus extends Component {
                     </Modal.Header>
                     <Modal.Body>{this.props.busReducer.Response}</Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.props.setErrorFalseBus}>
+                        <Button variant="danger" onClick={this.props.setErrorFalseBus}>
                             Close
                         </Button>
                     </Modal.Footer>

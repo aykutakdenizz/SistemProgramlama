@@ -10,6 +10,7 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import {addTicket, setErrorFalseTicket, setSuccessFalseTicket} from "../Actions/TicketAction";
 
 let token = null;
 
@@ -19,6 +20,7 @@ class Employee extends Component {
         this.state = {
             update: false,
             add: false,
+            buy:false,
         };
         this.Is_ActiveElement = React.createRef();
         this.DestinationElement = React.createRef();
@@ -27,6 +29,7 @@ class Employee extends Component {
         this.Bus_IdElement = React.createRef();
         this.Driver_IdElement = React.createRef();
         this.PaymentElement = React.createRef();
+        this.SeatElement = React.createRef();
     }
 
     submitHandler = async (event) => {
@@ -59,6 +62,16 @@ class Employee extends Component {
         this.setState({add: false});
     };
 
+    submitHandlerBuy = async (event) => {
+        event.preventDefault();
+        const ticket = {
+            Trip_Id: this.props.tripReducer.SelectedTrip.Id,
+            Seat:(this.SeatElement.current.value === "") ? null : (this.SeatElement.current.value),
+        };
+        this.props.addTicket(token, ticket, this.props.ticketReducer.Tickets);
+        this.setState({buy: false});
+    };
+
     componentDidMount() {
         token = localStorage.getItem("token");
         this.props.fetchTrips(token);
@@ -69,7 +82,7 @@ class Employee extends Component {
                 return (
                     <tr key={trip.Id} className="event__list-item">
                         <td>{trip.Id}</td>
-                        <td>{trip.Is_Active}</td>
+                        <td>{(trip.Is_Active?("Active"):("Not Active"))}</td>
                         <td>{trip.Destination}</td>
                         <td>{trip.Departure}</td>
                         <td>{trip.Departure_Time}</td>
@@ -78,15 +91,20 @@ class Employee extends Component {
                         <td>{trip.Payment}</td>
                         <td>
                             <ButtonGroup vertical>
-                                <Button variant="success" onClick={() => {
+                                {(localStorage.getItem("Role")==="Manager")?(
+                                    <Button variant="success" onClick={() => {
                                     this.setState({update: true});
                                     this.props.tripReducer.SelectedTrip = trip;
-                                }}>Update</Button>
-                                <Button variant="danger" onClick={() => {
+                                }}>Update</Button>):null}
+                                {(localStorage.getItem("Role")==="Manager")?(
+                                    <Button variant="danger" disabled={localStorage.getItem("Role")==="User"} onClick={() => {
                                     this.props.deleteTrip(token, trip.Id, this.props.tripReducer.Trips);
-                                }}>Delete</Button>
-                                <Button variant="warning" disabled={!trip.Is_Active} onClick={() => {
-                                }}>Buy</Button>
+                                }}>Delete</Button>):null}
+                                {(localStorage.getItem("Role")==="User")?(
+                                    <Button variant="warning" disabled={!trip.Is_Active} onClick={() => {
+                                    this.setState({buy: true});
+                                    this.props.tripReducer.SelectedTrip = trip;
+                                }}>Buy</Button>):null}
                             </ButtonGroup>
                         </td>
                     </tr>
@@ -112,9 +130,10 @@ class Employee extends Component {
                     </thead>
                     <tbody>{tripList}</tbody>
                 </Table>
+                {(localStorage.getItem("Role")==="Manager")?(
                 <Button onClick={() => {
                     this.setState({add: true})
-                }}>ADD NEW TRIP</Button>
+                }}>ADD NEW TRIP</Button>):null}
 
 
                 <Modal show={this.state.update}>
@@ -282,13 +301,60 @@ class Employee extends Component {
                 </Modal>
 
 
+                <Modal show={this.state.buy}>
+                    <Modal.Header closeButton onClick={() => {
+                        this.setState({buy: false});
+                    }}>
+                        <Modal.Title>Buy Ticket</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div className="UpdateProject">
+                            <Card className="UpdateProject-Card">
+                                <Card.Header className="UpdateProject-Card_Header">Buy a ticket</Card.Header>
+                                <Card.Body className="UpdateProject-Card_Body">
+                                    <Form className="UpdateProject-Card_Form" onSubmit={this.submitHandlerBuy}>
+                                        <Row>
+                                            <Col md="auto">
+                                                <Form.Group controlId="formBasicProjectName">
+                                                    <Form.Label>Seat</Form.Label>
+                                                    <Form.Control type="text"
+                                                                  placeholder="Please enter seat"
+                                                                  ref={this.SeatElement}/>
+                                                </Form.Group>
+                                            </Col>
+                                        </Row>
+                                        <Col md="auto">
+                                            <Button variant="primary" type="submit">
+                                                Buy
+                                            </Button>
+                                        </Col>
+                                    </Form>
+                                </Card.Body>
+                            </Card>
+                        </div>
+                    </Modal.Body>
+                </Modal>
+
+
                 <Modal show={this.props.tripReducer.Error}>
                     <Modal.Header closeButton onClick={this.props.setErrorFalseTrip}>
                         <Modal.Title>Uppss, somethings went wrong...</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>{this.props.tripReducer.Response}</Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.props.setErrorFalseTrip}>
+                        <Button variant="danger" onClick={this.props.setErrorFalseTrip}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal show={this.props.ticketReducer.Error || this.props.ticketReducer.Success}>
+                    <Modal.Header closeButton onClick={()=>{this.props.setErrorFalseTicket();this.props.setSuccessFalseTicket();}}>
+                        <Modal.Title>{(this.props.ticketReducer.Error) ? ("Uppss, somethings went wrong..."):("Success")}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>{this.props.ticketReducer.Response}</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={()=>{this.props.setErrorFalseTicket();this.props.setSuccessFalseTicket();}}>
                             Close
                         </Button>
                     </Modal.Footer>
@@ -302,6 +368,7 @@ class Employee extends Component {
 const mapStateToProps = (state) => {
     return {
         tripReducer: state.tripReducer,
+        ticketReducer: state.ticketReducer,
     };
 };
 
@@ -324,6 +391,15 @@ const mapDispatchToProps = (dispatch) => {
         },
         setErrorFalseTrip: () => {
             dispatch(setErrorFalseTrip());
+        },
+        addTicket:(token, ticket, tickets) =>{
+            dispatch(addTicket(token, ticket, tickets));
+        },
+        setSuccessFalseTicket:() => {
+            dispatch(setSuccessFalseTicket());
+        },
+        setErrorFalseTicket:() => {
+            dispatch(setErrorFalseTicket());
         }
     };
 };

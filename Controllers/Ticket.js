@@ -2,83 +2,95 @@ const Ticket = require('../Models/Ticket');
 const User = require('../Models/User');
 const Trip = require('../Models/Trip');
 const Bus = require('../Models/Bus');
+const Manager = require('../Models/Manager');
+const jwt = require('jsonwebtoken');
 
 exports.addTicket = async (req, res, next) => {
     let user;
     let trip;
     let bus;
-    if (req.body.Seat == null || req.body.Trip_Id == null || req.body.User_Id == null) {
+    if (req.body.Seat == null || req.body.Trip_Id == null) {
         return res.status(500).json({
             Error: 'Value/Values missing when adding ticket'
         });
     }
-    user = await findUser(req.body);
-    if (user == null) {
-        return res.status(500).json({
-            Error: 'There is no user or error occur when adding ticket!!'
-        });
-    }
-    trip = await findTrip({Trip_Id: req.body.Trip_Id});
-    if (trip == null) {
-        return res.status(500).json({
-            Error: 'There is no trip or error occur when adding ticket!!'
-        });
-    }
-    bus = await findBus(trip);
-    if (bus == null) {
-        return res.status(500).json({
-            Error: 'There is no bus or error occur when adding ticket!!'
-        });
-    }
-    if ((user.Money >= trip.Payment) && checkSeat(bus.Empty_Seats, req.body.Seat)) {
-        User.update({
-                Money: (user.Money - trip.Payment)
-            },
-            {
-                where: {
-                    Id: user.Id
-                }
-            }).then(result => {
-                const newTicket = new Ticket({
-                    Trip_Id: req.body.Trip_Id,
-                    Seat: req.body.Seat,
-                    User_Id: req.body.User_Id
-                });
-                newTicket.save(newTicket).then(user => {
-                    Bus.update({
-                            Empty_Seats: removeSeat(bus.Empty_Seats, req.body.Seat)
-                        },
-                        {
-                            where: {
-                                Id: trip.Bus_Id
-                            }
-                        }).then(result =>
-                        res.status(200).json({
-                            Ticket: result
-                        })
-                    ).catch(err => {
+    let token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
+    const values = decoded;
+    const role = values.Role;
+    const id = values.Id;
+    if (role === "User") {
+        user = await findUser({User_Id: id});
+        if (user == null) {
+            return res.status(500).json({
+                Error: 'There is no user or error occur when adding ticket!!'
+            });
+        }
+        trip = await findTrip({Trip_Id: req.body.Trip_Id});
+        if (trip == null) {
+            return res.status(500).json({
+                Error: 'There is no trip or error occur when adding ticket!!'
+            });
+        }
+        bus = await findBus(trip);
+        if (bus == null) {
+            return res.status(500).json({
+                Error: 'There is no bus or error occur when adding ticket!!'
+            });
+        }
+        if ((user.Money >= trip.Payment) && checkSeat(bus.Empty_Seats, req.body.Seat)) {
+            User.update({
+                    Money: (user.Money - trip.Payment)
+                },
+                {
+                    where: {
+                        Id: user.Id
+                    }
+                }).then(result => {
+                    const newTicket = new Ticket({
+                        Trip_Id: req.body.Trip_Id,
+                        Seat: req.body.Seat,
+                        User_Id: id
+                    });
+                    newTicket.save(newTicket).then(user => {
+                        Bus.update({
+                                Empty_Seats: removeSeat(bus.Empty_Seats, req.body.Seat)
+                            },
+                            {
+                                where: {
+                                    Id: trip.Bus_Id
+                                }
+                            }).then(result => {
+                            res.status(200).json({
+                                Ticket: result[0]
+                            })
+                        }).catch(err => {
+                            res.status(500).json({
+                                Error: 'Bus can not updated when ticket added!! => ERR:' + err
+                            });
+                        });
+                    }).catch(err => {
                         res.status(500).json({
-                            Error: 'Bus can not updated when ticket added!! => ERR:' + err
+                            Error: 'Ticket can not added !! => ERR:' + err
                         });
                     });
-                }).catch(err => {
-                    res.status(500).json({
-                        Error: 'Ticket can not added !! => ERR:' + err
-                    });
+                }
+            ).catch(err => {
+                res.status(500).json({
+                    Error: 'User can not updated when paying ticket !! => ERR:' + err
                 });
-            }
-        ).catch(err => {
-            res.status(500).json({
-                Error: 'User can not updated when paying ticket !! => ERR:' + err
             });
-        });
 
+        } else {
+            res.status(500).json({
+                Error: 'Ticket can not added no enough money or that seat is not empty!! => ERR:'
+            });
+        }
     } else {
-        res.status(500).json({
-            Error: 'Ticket can not added no enough money or that seat is not empty!! => ERR:'
+        return res.status(500).json({
+            Error: 'Managers can not buy ticket'
         });
     }
-
 };
 
 exports.deleteTicket = async (req, res, next) => {
@@ -259,23 +271,65 @@ exports.getTickets = (req, res, next) => {
         });
 };
 
-exports.getUserTickets = (req, res, next) => {
-    if (req.body.User_Id == null) {
+exports.getTicketsWithToken = (req, res, next) => {
+    if (req.body.Token == null) {
         return res.status(500).json({
-            Error: 'Value/Values missing when getting user ticket'
+            Error: 'Value/Values missing when update ticket'
         });
     }
-    Ticket.findAll({where:{User_Id:req.body.User_Id}})
-        .then(result => {
-            res.status(200).json({
-                Ticket: result
-            })
-        })
-        .catch(err => {
-            res.status(500).json({
-                Error: 'Tickets can not find !! => ERR:' + err
+    const decoded = jwt.verify(req.body.Token, process.env.JWT_KEY);
+    const values = decoded;
+    const role = values.Role;
+    const id = values.Id;
+    if (role === "User") {
+        User.findOne({where: {Id: id}}).then(user => {
+            if (user !== null) {
+                Ticket.findAll({where: {User_Id: user.Id}})
+                    .then(result => {
+                        return res.status(200).json({
+                            Ticket: result
+                        })
+                    })
+                    .catch(err => {
+                        return res.status(500).json({
+                            Error: 'Tickets can not find !! => ERR:' + err
+                        });
+                    });
+            } else {
+                return res.status(500).json({
+                    Error: 'Invalid user Id when get tickets'
+                });
+            }
+        }).catch(err => {
+            return res.status(500).json({
+                Error: 'Tickets can not get !! => ERR:' + err
             });
         });
+    } else {
+        Manager.findOne({where: {Id: id}}).then(manager => {
+            if (manager !== null) {
+                Ticket.findAll()
+                    .then(result => {
+                        res.status(200).json({
+                            Ticket: result
+                        })
+                    })
+                    .catch(err => {
+                        res.status(500).json({
+                            Error: 'Tickets can not find !! => ERR:' + err
+                        });
+                    });
+            } else {
+                return res.status(500).json({
+                    Error: 'Invalid manager Id when get tickets'
+                });
+            }
+        }).catch(err => {
+            return res.status(500).json({
+                Error: 'Tickets can not get !! => ERR:' + err
+            });
+        });
+    }
 };
 
 function checkSeat(seats, selectedSeat) {

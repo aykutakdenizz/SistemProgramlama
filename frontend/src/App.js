@@ -12,6 +12,7 @@ import Manager from "./Pages/Manager";
 import Navigation from "./Pages/Navigation";
 import HomePage from "./Pages/HomePage";
 import Ticket from "./Pages/Ticket";
+import SignUp from "./Pages/SignUp";
 
 /*import { Redirect } from 'react-router-dom'
 function funcLogin() {return <Redirect to='/Login' /> ;}*/
@@ -31,6 +32,7 @@ function App() {
                         <Route path="/Users" component={User}/>
                         <Route path="/Managers" component={Manager}/>
                         <Route path="/Tickets" component={Ticket}/>
+                        <Route path="/SignUp" component={SignUp}/>
                     </Switch>
                 </main>
             </React.Fragment>

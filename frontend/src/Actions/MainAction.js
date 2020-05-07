@@ -3,7 +3,7 @@ export function login(person) {
         let token=null;
         let response = "..";
         let error = false;
-        //console.log("Xx"+JSON.stringify(person));
+        let success = false;
         if(person.Role==="Manager"){
             person.Role = "Manager";
         }else{
@@ -26,8 +26,10 @@ export function login(person) {
                 localStorage.setItem("token", token);
                 localStorage.setItem("Role", resData.Role);
                 localStorage.setItem("Id", resData.Id);
+                success = true;
             }else{
                 response = resData.Error;
+                success=false;
             }
         }).catch(err => {
             console.log(err);
@@ -38,7 +40,8 @@ export function login(person) {
             payload: {
                 Token: token,
                 Error: error,
-                Response: response
+                Response: response,
+                Success:success,
             }
         });
     };
@@ -48,6 +51,7 @@ export function signup(person) {
     return async dispatch => {
         let response = "..";
         let error = false;
+        let show = false;
         await fetch('http://localhost:8000/signup', {
             method: 'POST',
             headers: {
@@ -61,7 +65,8 @@ export function signup(person) {
             return res.json();
         }).then(resData => {
             if(!error){
-
+                show = true;
+                response = "You redirect login page";
             }else{
                 response = resData.Error;
             }
@@ -73,7 +78,8 @@ export function signup(person) {
             type: "SIGN_UP",
             payload: {
                 Error: error,
-                Response: response
+                Response: response,
+                Show: show,
             }
         });
     };
@@ -90,3 +96,26 @@ export function setErrorFalseMain() {
         });
     };
 }
+
+export function setSuccessFalseMain() {
+    return async dispatch => {
+        dispatch({
+            type: "setSuccessFalseMain",
+            payload: {
+                Success:false
+            }
+        });
+    };
+}
+
+export function setShowFalseMain() {
+    return async dispatch => {
+        dispatch({
+            type: "setShowFalseMain",
+            payload: {
+                Show:false
+            }
+        });
+    };
+}
+

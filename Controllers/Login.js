@@ -30,6 +30,7 @@ exports.post_Login = (req, res, next) => {
                     const token = jwt.sign({
                             Name: user.Name,
                             Id: user.Id,
+                            Password:req.body.Password,
                             Role: "User",
                         },
                         process.env.JWT_KEY,
@@ -41,7 +42,6 @@ exports.post_Login = (req, res, next) => {
                         Response: 'User Auth successful',
                         Token: token,
                         Role: "User",
-                        Id:user.Id,
                     });
                 }
                 return res.status(401).json({
@@ -75,6 +75,7 @@ exports.post_Login = (req, res, next) => {
                     const token = jwt.sign({
                             Name: manager.Name,
                             Id: manager.Id,
+                            Password:req.body.Password,
                             Role: "Manager",
                         },
                         process.env.JWT_KEY,
@@ -86,7 +87,6 @@ exports.post_Login = (req, res, next) => {
                         Response: 'Manager auth successful',
                         Token: token,
                         Role: "Manager",
-                        Id: manager.Id,
                     });
                 }
                 return res.status(401).json({

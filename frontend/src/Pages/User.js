@@ -161,7 +161,7 @@ class User extends Component {
                     </Modal.Header>
                     <Modal.Body>{this.props.userReducer.Response}</Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.props.setErrorFalseUser}>
+                        <Button variant="danger" onClick={this.props.setErrorFalseUser}>
                             Close
                         </Button>
                     </Modal.Footer>

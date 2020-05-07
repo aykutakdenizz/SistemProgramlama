@@ -67,13 +67,16 @@ class Employee extends Component {
                         <td>{employee.Address}</td>
                         <td>
                             <ButtonGroup vertical>
+                                {(localStorage.getItem("Role")==="Manager")?(
                                 <Button variant="success" onClick={()=>{
                                     this.setState({update:true});
                                     this.props.employeeReducer.SelectedEmployee = employee;
-                                }}>Update</Button>
+                                }}>Update</Button>):null}
+                                {(localStorage.getItem("Role")==="Manager")?(
                                 <Button variant="danger" onClick={()=>{
                                     this.props.deleteEmployee(token,employee.Id, this.props.employeeReducer.Employees);
-                                }}>Delete</Button>
+                                }}>Delete</Button>):null}
+                                {(localStorage.getItem("Role")==="User")?("No permission"):null}
                             </ButtonGroup>
                         </td>
                     </tr>
@@ -95,7 +98,8 @@ class Employee extends Component {
                     </thead>
                     <tbody>{employeeList}</tbody>
                 </Table>
-                <Button onClick={() => {this.setState({add: true})}}>ADD NEW EMPLOYEE</Button>
+                {(localStorage.getItem("Role")==="Manager")?(
+                <Button onClick={() => {this.setState({add: true})}}>ADD NEW EMPLOYEE</Button>):null}
 
 
 
@@ -206,7 +210,7 @@ class Employee extends Component {
                     </Modal.Header>
                     <Modal.Body>{this.props.employeeReducer.Response}</Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.props.setErrorFalseEmployee}>
+                        <Button variant="danger" onClick={this.props.setErrorFalseEmployee}>
                             Close
                         </Button>
                     </Modal.Footer>

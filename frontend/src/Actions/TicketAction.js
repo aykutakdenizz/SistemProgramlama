@@ -39,18 +39,18 @@ export function fetchTickets(token) {
     };
 }
 
-export function fetchUserTickets(token, userId) {
+export function fetchTicketsWithToken(token) {
     return async dispatch => {
         let tickets = [];
         let response = "..";
         let error = false;
-        await fetch('http://localhost:8000/ticket/getUserTickets', {
+        await fetch('http://localhost:8000/ticket/getTicketsWithToken', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + token,
             },
-            body: '{"User_Id":' + userId + '}'
+            body: '{"Token":"' + token + '"}'
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
                 error = true;
@@ -71,7 +71,7 @@ export function fetchUserTickets(token, userId) {
         });
 
         dispatch({
-            type: "FETCH_USER_TICKET",
+            type: "FETCH_TICKET_with_token",
             payload: {
                 Tickets: tickets,
                 Response: response,
@@ -86,6 +86,7 @@ export function addTicket(token, ticket, tickets) {
         let new_tickets = [];
         let response = "..";
         let error = false;
+        let success = false;
         await fetch('http://localhost:8000/ticket/addTicket', {
             method: 'POST',
             headers: {
@@ -100,10 +101,13 @@ export function addTicket(token, ticket, tickets) {
             return res.json();
         }).then(resData => {
             if(!error){
-                tickets.forEach(aTicket => {
-                    new_tickets.push(aTicket);
-                });
-                new_tickets.push(resData.Ticket);
+                if(resData.Ticket === 1){
+                    response = "Ticket bought";
+                    success = true;
+                }else{
+                    response = "Error occurred try again";
+                    error = true;
+                }
             }else{
                 response = resData.Error;
             }
@@ -117,6 +121,7 @@ export function addTicket(token, ticket, tickets) {
                 Tickets: new_tickets,
                 Response: response,
                 Error: error,
+                Success:success,
             }
         });
     };
@@ -146,7 +151,7 @@ export function updateTicket(token, ticket, tickets) {
                         new_tickets.push(aTicket);
                     }
                 });
-                if(resData.Bus != null){
+                if(resData.Ticket != null){
                     new_tickets.push(resData.Ticket);
                 }
             }else{
@@ -254,6 +259,18 @@ export function setErrorFalseTicket() {
             payload: {
                 Response: "...",
                 Error:false
+            }
+        });
+    };
+}
+
+export function setSuccessFalseTicket() {
+    return async dispatch => {
+        dispatch({
+            type: "setSuccessFalseTicket",
+            payload: {
+                Response: "...",
+                Success:false
             }
         });
     };

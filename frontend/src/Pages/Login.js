@@ -7,7 +7,8 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Modal from "react-bootstrap/Modal";
 
-import {login, setErrorFalseMain} from "../Actions/MainAction";
+import {login, setErrorFalseMain, setSuccessFalseMain} from "../Actions/MainAction";
+import {NavLink} from "react-router-dom";
 
 class Login extends Component {
     constructor(props) {
@@ -41,7 +42,7 @@ class Login extends Component {
             <React.Fragment>
                 <Modal.Dialog>
                     <Modal.Header closeButton onClick={() => {
-                        this.props.history.push('/HomePage');
+                        //this.props.history.push('/HomePage');
                     }}>
                         <Modal.Title>LOGIN</Modal.Title>
                     </Modal.Header>
@@ -79,10 +80,12 @@ class Login extends Component {
                                                     </Form.Control>
                                                 </Form.Group>
                                             </Col>
-
+                                            <Col md="auto">
+                                                <NavLink to="/SignUp">Dont't you have a account? Please click here to sign up</NavLink>
+                                            </Col>
                                         </Row>
                                         <Col md="auto">
-                                            <Button variant="primary" type="submit">
+                                            <Button variant="success" type="submit">
                                                 LOGIN
                                             </Button>
                                         </Col>
@@ -99,7 +102,19 @@ class Login extends Component {
                     </Modal.Header>
                     <Modal.Body>{this.props.mainReducer.Response}</Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.props.setErrorFalseMain}>
+                        <Button variant="danger" onClick={this.props.setErrorFalseMain}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal show={this.props.mainReducer.Success}>
+                    <Modal.Header closeButton onClick={()=>{this.props.setSuccessFalseMain();this.props.history.push('/MainPage');}}>
+                        <Modal.Title>Login is successful</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Welcome</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="info" onClick={()=>{this.props.setSuccessFalseMain();this.props.history.push('/MainPage');}}>
                             Close
                         </Button>
                     </Modal.Footer>
@@ -113,7 +128,6 @@ class Login extends Component {
 const mapStateToProps = (state) => {
     return {
         mainReducer: state.mainReducer,
-        busReducer: state.busReducer,
     };
 };
 
@@ -124,6 +138,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         setErrorFalseMain: () => {
             dispatch(setErrorFalseMain());
+        },
+        setSuccessFalseMain:() =>{
+            dispatch(setSuccessFalseMain());
         }
     };
 };
