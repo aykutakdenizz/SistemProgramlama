@@ -2,6 +2,9 @@
 const initialEmployee = {
     Employees: [],
     FindEmployee: null,
+    SelectedEmployee : null,
+    Error: false,
+    Response: "...",
 };
 
 const EmployeeReducer = (state= initialEmployee, action) => {
@@ -9,31 +12,48 @@ const EmployeeReducer = (state= initialEmployee, action) => {
         case "FETCH_EMPLOYEE":
             state = {
                 ...state,
-                Employees: action.payload
+                Employees: action.payload.Employees,
+                Error: action.payload.Error,
+                Response: action.payload.Response,
             };
             break;
         case "UPDATE_EMPLOYEE":
             state = {
                 ...state,
-                Employees: action.payload
+                Employees: action.payload.Employees,
+                Error: action.payload.Error,
+                Response: action.payload.Response
             };
             break;
         case "DELETE_EMPLOYEE":
             state = {
                 ...state,
-                Employees: action.payload
+                Employees: action.payload.Employees,
+                Error: action.payload.Error,
+                Response: action.payload.Response
             };
             break;
         case "ADD_EMPLOYEE":
             state = {
                 ...state,
-                Employees: action.payload
+                Employees: action.payload.Employees,
+                Error: action.payload.Error,
+                Response: action.payload.Response
             };
             break;
         case "FIND_EMPLOYEE":
             state = {
                 ...state,
-                FindEmployee: action.payload
+                SelectedEmployee: action.payload.FindEmployee,
+                Error: action.payload.Error,
+                Response: action.payload.Response
+            };
+            break;
+        case "setErrorFalseEmployee":
+            state = {
+                ...state,
+                Error: action.payload.Error,
+                Response: action.payload.Response
             };
             break;
         default:

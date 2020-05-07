@@ -2,6 +2,9 @@
 const initialBus = {
     Buses: [],
     FindBus: null,
+    SelectedBus : null,
+    Response: "...",
+    Error: false,
 };
 
 const BusReducer = (state= initialBus, action) => {
@@ -9,31 +12,48 @@ const BusReducer = (state= initialBus, action) => {
         case "FETCH_BUS":
             state = {
                 ...state,
-                Buses: action.payload
+                Buses: action.payload.Buses,
+                Error: action.payload.Error,
+                Response: action.payload.Response
             };
             break;
         case "UPDATE_BUS":
             state = {
                 ...state,
-                Buses: action.payload
+                Buses: action.payload.Buses,
+                Error: action.payload.Error,
+                Response: action.payload.Response
             };
             break;
         case "DELETE_BUS":
             state = {
                 ...state,
-                Buses: action.payload
+                Buses: action.payload.Buses,
+                Error: action.payload.Error,
+                Response: action.payload.Response
             };
             break;
         case "ADD_BUS":
             state = {
                 ...state,
-                Buses: action.payload
+                Buses: action.payload.Buses,
+                Error: action.payload.Error,
+                Response: action.payload.Response
             };
             break;
         case "FIND_BUS":
             state = {
                 ...state,
-                FindBus: action.payload
+                SelectedBus: action.payload.FindBus,
+                Error: action.payload.Error,
+                Response: action.payload.Response
+            };
+            break;
+        case "setErrorFalseBus":
+            state = {
+                ...state,
+                Error: action.payload.Error,
+                Response: action.payload.Response
             };
             break;
         default:

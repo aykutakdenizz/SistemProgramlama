@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 exports.post_SignUp = (req, res, next) => {
     if (req.body.Role == null || req.body.Name == null || req.body.Password == null || req.body.Real_Name == null || req.body.Surname == null) {
         return res.status(404).json({
-            Message: 'Values/Value missing when sign up!'
+            Error: 'Values/Value missing when sign up!'
         });
     }
     if (req.body.Role === "User") {
@@ -16,13 +16,13 @@ exports.post_SignUp = (req, res, next) => {
         }).then(user => {
             if (user) {
                 return res.status(409).json({
-                    Message: 'User name exists!'
+                    Error: 'User name exists!'
                 });
             } else {
                 bcrypt.hash(req.body.Password, 10, (err, hash) => {
                     if (err) {
                         res.status(500).json({
-                            error: err
+                            Error: err
                         });
                         console.log(err);
                     } else {
@@ -36,11 +36,11 @@ exports.post_SignUp = (req, res, next) => {
                         user.save(user)
                             .then(result => {
                                 res.status(201).json({
-                                    user: "User " + user.Name + ' is created.'
+                                    User: "User " + user.Name + ' is created.'
                                 })
                             }).catch(err => {
                             res.status(500).json({
-                                error: err
+                                Error: err
                             })
                         })
                     }
@@ -54,7 +54,7 @@ exports.post_SignUp = (req, res, next) => {
     } else if (req.body.Role === "Manager") {
         if (req.body.Master_Manager_Name == null || req.body.Master_Manager_Password == null) {
             return res.status(404).json({
-                Message: 'Master manager values/value missing when sign up!'
+                Error: 'Master manager values/value missing when sign up!'
             });
         }
         if (req.body.Master_Manager_Name === "admin" && req.body.Master_Manager_Password === "admin") {
@@ -65,13 +65,13 @@ exports.post_SignUp = (req, res, next) => {
             }).then(manager => {
                 if (manager) {
                     return res.status(409).json({
-                        Message: 'Manager name exists!'
+                        Error: 'Manager name exists!'
                     });
                 } else {
                     bcrypt.hash(req.body.Password, 10, (err, hash) => {
                         if (err) {
                             return res.status(500).json({
-                                error: err
+                                Error: err
                             });
                         } else {
                             const manager = new Manager({
@@ -83,11 +83,11 @@ exports.post_SignUp = (req, res, next) => {
                             manager.save(manager)
                                 .then(result => {
                                     return res.status(201).json({
-                                        manager: "Manager " + manager.Name + ' is created.'
+                                        Manager: "Manager " + manager.Name + ' is created.'
                                     })
                                 }).catch(err => {
                                 return res.status(500).json({
-                                    error: err
+                                    Error: err
                                 })
                             })
                         }
@@ -101,12 +101,12 @@ exports.post_SignUp = (req, res, next) => {
         }
         else {
             return res.status(409).json({
-                Message: 'There is no master that value!'
+                Error: 'There is no master that value!'
             });
         }
     } else {
         return res.status(404).json({
-            Message: 'Invalid role when log in!'
+            Error: 'Invalid role when log in!'
         });
     }
 };

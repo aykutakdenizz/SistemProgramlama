@@ -2,7 +2,7 @@ const Trip = require('../Models/Trip');
 
 exports.addTrip = (req, res, next) => {
     const newTrip = new Trip({
-        Id: req.body.Id,
+        //Id: req.body.Id,
         Is_Active: req.body.Is_Active,
         Destination: req.body.Destination,
         Departure: req.body.Departure,
@@ -22,6 +22,11 @@ exports.addTrip = (req, res, next) => {
     });
 };
 exports.deleteTrip = (req, res, next) => {
+    if (req.body.Id == null) {
+        return res.status(404).json({
+            Error: 'Values/Value missing when deleting trip!'
+        });
+    }
     Trip.destroy({
         where: {
             Id: req.body.Id
@@ -39,7 +44,7 @@ exports.deleteTrip = (req, res, next) => {
 exports.updateTrip = (req, res, next) => {
     if (req.body.Id == null) {
         return res.status(404).json({
-            Message: 'Values/Value missing when updating trip!'
+            Error: 'Values/Value missing when updating trip!'
         });
     }
     Trip.update({
@@ -76,15 +81,18 @@ exports.updateTrip = (req, res, next) => {
                 Trip: null
             });
         }
-    }
-
-    ).catch(err => {
+    }).catch(err => {
         res.status(500).json({
             Error: 'Trip can not updated !! => ERR:' + err
         });
     });
 };
 exports.findTrip = (req, res, next) => {
+    if (req.body.Id == null) {
+        return res.status(404).json({
+            Error: 'Values/Value missing when finding trip!'
+        });
+    }
     Trip.findOne({
         where: {
             Id: req.body.Id,

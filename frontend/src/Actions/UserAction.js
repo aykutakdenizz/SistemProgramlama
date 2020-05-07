@@ -1,6 +1,8 @@
 export function fetchUsers(token) {
     return async dispatch => {
         let users = [];
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/user/getUsers', {
             method: 'GET',
             headers: {
@@ -9,14 +11,18 @@ export function fetchUsers(token) {
             }
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            const s = resData.User;
-            for (let i = 0; i < s.length; i++) {
-                let user = s[i];
-                users.push(user);
+            if(!error){
+                const s = resData.User;
+                for (let i = 0; i < s.length; i++) {
+                    let user = s[i];
+                    users.push(user);
+                }
+            }else{
+                response=resData.Error;
             }
         }).catch(err => {
             console.log(err);
@@ -24,7 +30,11 @@ export function fetchUsers(token) {
 
         dispatch({
             type: "FETCH_USER",
-            payload: users
+            payload: {
+                Users: users,
+                Response: response,
+                Error: error,
+            }
         });
     };
 }
@@ -32,6 +42,8 @@ export function fetchUsers(token) {
 export function updateUser(token, user, users) {
     return async dispatch => {
         let new_users = [];
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/user/updateUser', {
             method: 'POST',
             headers: {
@@ -41,17 +53,21 @@ export function updateUser(token, user, users) {
             body: JSON.stringify(user)
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            users.forEach(aUser => {
-                if (aUser.Id !== user.Id) {
-                    new_users.push(aUser);
+            if(!error){
+                users.forEach(aUser => {
+                    if (aUser.Id !== user.Id) {
+                        new_users.push(aUser);
+                    }
+                });
+                if(resData.User != null){
+                    new_users.push(resData.User);
                 }
-            });
-            if(resData.User != null){
-                new_users.push(resData.User);
+            }else{
+                response = resData.Error;
             }
         }).catch(err => {
             console.log(err);
@@ -59,7 +75,11 @@ export function updateUser(token, user, users) {
 
         dispatch({
             type: "UPDATE_USER",
-            payload: new_users
+            payload: {
+                Users: new_users,
+                Response: response,
+                Error: error,
+            }
         });
     };
 }
@@ -67,6 +87,8 @@ export function updateUser(token, user, users) {
 export function deleteUser(token, userId, users) {
     return async dispatch => {
         let new_users = [];
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/user/deleteUser', {
             method: 'POST',
             headers: {
@@ -76,28 +98,38 @@ export function deleteUser(token, userId, users) {
             body: '{"Id":' + userId + '}'
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            users.forEach(aUser => {
-                if (aUser.Id !== userId) {
-                    new_users.push(aUser);
-                }
-            });
+            if(!error){
+                users.forEach(aUser => {
+                    if (aUser.Id !== userId) {
+                        new_users.push(aUser);
+                    }
+                });
+            }else{
+                response = resData.Error;
+            }
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "DELETE_USER",
-            payload: new_users
+            payload: {
+                Users: new_users,
+                Response: response,
+                Error: error,
+            }
         });
     };
 }
 export function findUser(token, userId) {
     return async dispatch => {
         let selected_user = null;
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/user/findUser', {
             method: 'POST',
             headers: {
@@ -107,18 +139,38 @@ export function findUser(token, userId) {
             body: '{"Id":' + userId + '}'
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            selected_user = resData.User;
+            if(!error){
+                selected_user = resData.User;
+            }else{
+                response = resData.Error;
+            }
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "FIND_USER",
-            payload: selected_user
+            payload: {
+                FindUser: selected_user,
+                Response: response,
+                Error: error,
+            }
+        });
+    };
+}
+
+export function setErrorFalseUser() {
+    return async dispatch => {
+        dispatch({
+            type: "setErrorFalseUser",
+            payload: {
+                Response: "...",
+                Error:false
+            }
         });
     };
 }

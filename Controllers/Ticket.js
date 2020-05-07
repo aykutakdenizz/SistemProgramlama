@@ -80,6 +80,7 @@ exports.addTicket = async (req, res, next) => {
     }
 
 };
+
 exports.deleteTicket = async (req, res, next) => {
     let user;
     let trip;
@@ -151,6 +152,7 @@ exports.deleteTicket = async (req, res, next) => {
 
 
 };
+
 exports.updateTicket = async (req, res, next) => {
     if (req.body.Seat == null || req.body.Id == null) {
         return res.status(500).json({
@@ -226,6 +228,7 @@ exports.updateTicket = async (req, res, next) => {
     }
 
 };
+
 exports.findTicket = (req, res, next) => {
     Ticket.findOne({
         where: {
@@ -241,8 +244,28 @@ exports.findTicket = (req, res, next) => {
         });
     });
 };
+
 exports.getTickets = (req, res, next) => {
     Ticket.findAll()
+        .then(result => {
+            res.status(200).json({
+                Ticket: result
+            })
+        })
+        .catch(err => {
+            res.status(500).json({
+                Error: 'Tickets can not find !! => ERR:' + err
+            });
+        });
+};
+
+exports.getUserTickets = (req, res, next) => {
+    if (req.body.User_Id == null) {
+        return res.status(500).json({
+            Error: 'Value/Values missing when getting user ticket'
+        });
+    }
+    Ticket.findAll({where:{User_Id:req.body.User_Id}})
         .then(result => {
             res.status(200).json({
                 Ticket: result

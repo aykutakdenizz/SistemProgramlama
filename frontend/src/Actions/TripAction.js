@@ -1,6 +1,8 @@
 export function fetchTrips(token) {
     return async dispatch => {
         let trips = [];
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/trip/getTrips', {
             method: 'GET',
             headers: {
@@ -9,28 +11,39 @@ export function fetchTrips(token) {
             }
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            const s = resData.Trip;
-            for (let i = 0; i < s.length; i++) {
-                let trip = s[i];
-                trips.push(trip);
+            if(!error){
+                const s = resData.Trip;
+                for (let i = 0; i < s.length; i++) {
+                    let trip = s[i];
+                    trips.push(trip);
+                }
+            }else{
+                response = resData.Error;
             }
+
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "FETCH_TRIP",
-            payload: trips
+            payload: {
+                Trips: trips,
+                Response: response,
+                Error: error,
+            }
         });
     };
 }
 export function addTrip(token, trip, trips) {
     return async dispatch => {
         let new_trips = [];
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/trip/addTrip', {
             method: 'POST',
             headers: {
@@ -40,27 +53,38 @@ export function addTrip(token, trip, trips) {
             body: JSON.stringify(trip)
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            trips.forEach(aTrip => {
-                new_trips.push(aTrip);
-            });
-            new_trips.push(resData.Trip);
+            if(!error){
+                trips.forEach(aTrip => {
+                    new_trips.push(aTrip);
+                });
+                new_trips.push(resData.Trip);
+            }else{
+                response = resData.Error;
+            }
+
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "ADD_TRIP",
-            payload: new_trips
+            payload: {
+                Trips: new_trips,
+                Response: response,
+                Error: error,
+            }
         });
     };
 }
 export function updateTrip(token, trip, trips) {
     return async dispatch => {
         let new_trips = [];
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/trip/updateTrip', {
             method: 'POST',
             headers: {
@@ -70,25 +94,34 @@ export function updateTrip(token, trip, trips) {
             body: JSON.stringify(trip)
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            trips.forEach(aTrip => {
-                if (aTrip.Id !== trip.Id) {
-                    new_trips.push(aTrip);
+            if(!error){
+                trips.forEach(aTrip => {
+                    if (aTrip.Id !== trip.Id) {
+                        new_trips.push(aTrip);
+                    }
+                });
+                if(resData.Trip!=null){
+                    new_trips.push(resData.Trip);
                 }
-            });
-            if(resData.Trip!=null){
-                new_trips.push(resData.Trip);
+            }else{
+                response = resData.Error;
             }
+
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "UPDATE_TRIP",
-            payload: new_trips
+            payload: {
+                Trips: new_trips,
+                Response: response,
+                Error: error,
+            }
         });
     };
 }
@@ -96,6 +129,8 @@ export function updateTrip(token, trip, trips) {
 export function deleteTrip(token, tripId, trips) {
     return async dispatch => {
         let new_trips = [];
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/trip/deleteTrip', {
             method: 'POST',
             headers: {
@@ -105,28 +140,39 @@ export function deleteTrip(token, tripId, trips) {
             body: '{"Id":' + tripId + '}'
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            trips.forEach(aTrip => {
-                if (aTrip.Id !== tripId) {
-                    new_trips.push(aTrip);
-                }
-            });
+            if(!error){
+                trips.forEach(aTrip => {
+                    if (aTrip.Id !== tripId) {
+                        new_trips.push(aTrip);
+                    }
+                });
+            }else{
+                response = resData.Error;
+            }
+
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "DELETE_TRIP",
-            payload: new_trips
+            payload: {
+                Trips: new_trips,
+                Response: response,
+                Error: error,
+            }
         });
     };
 }
 export function findTrip(token, tripId) {
     return async dispatch => {
         let selected_trip = null;
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/trip/findTrip', {
             method: 'POST',
             headers: {
@@ -136,18 +182,39 @@ export function findTrip(token, tripId) {
             body: '{"Id":' + tripId + '}'
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            selected_trip = resData.Trip;
+            if(!error){
+                selected_trip = resData.Trip;
+            }else{
+                response = resData.Error;
+            }
+
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "FIND_TRIP",
-            payload: selected_trip
+            payload: {
+                FindTrip: selected_trip,
+                Response: response,
+                Error: error,
+            }
+        });
+    };
+}
+
+export function setErrorFalseTrip() {
+    return async dispatch => {
+        dispatch({
+            type: "setErrorFalseTrip",
+            payload: {
+                Response: "...",
+                Error:false
+            }
         });
     };
 }

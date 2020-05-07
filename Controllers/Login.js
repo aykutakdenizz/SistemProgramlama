@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 exports.post_Login = (req, res, next) => {
     if(req.body.Role == null || req.body.Name == null || req.body.Password == null ){
         return res.status(404).json({
-            Message: 'Values/Value missing when log in!'
+            Error: 'Values/Value missing when log in!'
         });
     }
     if(req.body.Role==="User"){
@@ -17,13 +17,13 @@ exports.post_Login = (req, res, next) => {
         }).then(user => {
             if ((user == null)) {
                 return res.status(401).json({
-                    Message: 'User auth failed !'
+                    Error: 'User auth failed !'
                 });
             }
             bcrypt.compare(req.body.Password, user.Password, (err, result) => {
                 if (err) {
                     return res.status(401).json({
-                        message: 'User Auth failed !'
+                        Error: 'User Auth failed !'
                     });
                 }
                 if (result) {
@@ -38,12 +38,14 @@ exports.post_Login = (req, res, next) => {
                         }
                     );
                     return res.status(200).json({
-                        message: 'User Auth successful',
-                        token: token
+                        Response: 'User Auth successful',
+                        Token: token,
+                        Role: "User",
+                        Id:user.Id,
                     });
                 }
                 return res.status(401).json({
-                    message: 'User Auth failed !'
+                    Error: 'User Auth failed !'
                 });
             });
         }).catch(err => {
@@ -60,13 +62,13 @@ exports.post_Login = (req, res, next) => {
         }).then(manager => {
             if ((manager == null)) {
                 return res.status(401).json({
-                    Message: 'Manager auth failed !'
+                    Error: 'Manager auth failed !'
                 });
             }
             bcrypt.compare(req.body.Password, manager.Password, (err, result) => {
                 if (err) {
                     return res.status(401).json({
-                        message: 'Manager auth failed !'
+                        Error: 'Manager auth failed !'
                     });
                 }
                 if (result) {
@@ -81,12 +83,14 @@ exports.post_Login = (req, res, next) => {
                         }
                     );
                     return res.status(200).json({
-                        message: 'Manager auth successful',
-                        token: token
+                        Response: 'Manager auth successful',
+                        Token: token,
+                        Role: "Manager",
+                        Id: manager.Id,
                     });
                 }
                 return res.status(401).json({
-                    message: 'Manager auth failed !'
+                    Error: 'Manager auth failed !'
                 });
             });
         }).catch(err => {
@@ -97,7 +101,7 @@ exports.post_Login = (req, res, next) => {
     }
     else{
         return res.status(500).json({
-            Message: 'Invalid Role when log in!'
+            Error: 'Invalid Role when log in!'
         });
     }
 

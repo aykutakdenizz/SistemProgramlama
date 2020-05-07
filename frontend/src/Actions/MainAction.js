@@ -1,6 +1,8 @@
 export function login(person) {
     return async dispatch => {
         let token=null;
+        let response = "..";
+        let error = false;
         //console.log("Xx"+JSON.stringify(person));
         if(person.Role==="Manager"){
             person.Role = "Manager";
@@ -15,25 +17,37 @@ export function login(person) {
             body:JSON.stringify(person)
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            token =resData.token;
-            localStorage.setItem("token", resData.token);
+            if(!error){
+                token =resData.Token;
+                localStorage.setItem("token", token);
+                localStorage.setItem("Role", resData.Role);
+                localStorage.setItem("Id", resData.Id);
+            }else{
+                response = resData.Error;
+            }
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "LOG_IN",
-            payload: token
+            payload: {
+                Token: token,
+                Error: error,
+                Response: response
+            }
         });
     };
 }
 
 export function signup(person) {
     return async dispatch => {
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/signup', {
             method: 'POST',
             headers: {
@@ -42,18 +56,37 @@ export function signup(person) {
             body:JSON.stringify(person)
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
+            if(!error){
 
+            }else{
+                response = resData.Error;
+            }
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "SIGN_UP",
-            payload: null
+            payload: {
+                Error: error,
+                Response: response
+            }
+        });
+    };
+}
+
+export function setErrorFalseMain() {
+    return async dispatch => {
+        dispatch({
+            type: "setErrorFalseMain",
+            payload: {
+                Response: "...",
+                Error:false
+            }
         });
     };
 }

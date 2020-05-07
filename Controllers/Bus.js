@@ -3,7 +3,7 @@ const Bus = require('../Models/Bus');
 exports.addBus = (req, res, next) => {
     if (req.body.Plate == null || req.body.Seat_Plan == null || req.body.Empty_Seats == null) {
         return res.status(404).json({
-            Message: 'Values/Value missing when adding bus!'
+            Error: 'Values/Value missing when adding bus!'
         });
     }
     const newBus = new Bus({
@@ -27,7 +27,7 @@ exports.addBus = (req, res, next) => {
 exports.deleteBus = (req, res, next) => {
     if (req.body.Id == null) {
         return res.status(404).json({
-            Message: 'Values/Value missing when deleting bus!'
+            Error: 'Values/Value missing when deleting bus!'
         });
     }
     Bus.destroy({
@@ -47,7 +47,7 @@ exports.deleteBus = (req, res, next) => {
 exports.updateBus = (req, res, next) => {
     if (req.body.Plate == null || req.body.Seat_Plan == null || req.body.Empty_Seats == null || req.body.Id == null) {
         return res.status(404).json({
-            Message: 'Values/Value missing when updating bus!'
+            Error: 'Values/Value missing when updating bus!'
         });
     }
     Bus.update({
@@ -85,7 +85,7 @@ exports.updateBus = (req, res, next) => {
 exports.findBus = (req, res, next) => {
     if (req.body.Id == null) {
         return res.status(404).json({
-            Message: 'Values/Value missing when finding bus!'
+            Error: 'Values/Value missing when finding bus!'
         });
     }
     Bus.findOne({

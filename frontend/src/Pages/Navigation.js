@@ -22,6 +22,7 @@ const Navigation = props => (
                 <li><NavLink to="/Managers">Manager</NavLink></li>
                 <li><NavLink to="/Trips">Trip</NavLink></li>
                 <li><NavLink to="/Users">User</NavLink></li>
+                <li><NavLink to="/Tickets">Ticket</NavLink></li>
             </ul>
         </nav>
     </header>

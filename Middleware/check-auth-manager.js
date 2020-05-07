@@ -11,12 +11,12 @@ module.exports = (req, res, next) => {
         }
         else{
             return res.status(401).json({
-                message: 'Auth failed (Only managers)!'
+                Error: 'Auth failed (Only managers)!'
             })
         }
     }catch (error){
         return res.status(401).json({
-            message: 'Auth failed !'
+            Error: 'Auth failed !'
         })
     }
 };

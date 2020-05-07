@@ -1,6 +1,8 @@
 export function fetchManagers(token) {
     return async dispatch => {
         let managers = [];
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/manager/getManagers', {
             method: 'GET',
             headers: {
@@ -9,22 +11,31 @@ export function fetchManagers(token) {
             }
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            const s = resData.Manager;
-            for (let i = 0; i < s.length; i++) {
-                let manager = s[i];
-                managers.push(manager);
+            if(!error){
+                const s = resData.Manager;
+                for (let i = 0; i < s.length; i++) {
+                    let manager = s[i];
+                    managers.push(manager);
+                }
+            }else{
+                response = resData.Error;
             }
+
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "FETCH_MANAGER",
-            payload: managers
+            payload: {
+                Managers: managers,
+                Response: response,
+                Error: error,
+            }
         });
     };
 }
@@ -32,6 +43,8 @@ export function fetchManagers(token) {
 export function updateManager(token, manager, managers) {
     return async dispatch => {
         let new_managers = [];
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/manager/updateManager', {
             method: 'POST',
             headers: {
@@ -41,17 +54,21 @@ export function updateManager(token, manager, managers) {
             body: JSON.stringify(manager)
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            managers.forEach(aManager => {
-                if (aManager.Id !== manager.Id) {
-                    new_managers.push(aManager);
+            if(!error){
+                managers.forEach(aManager => {
+                    if (aManager.Id !== manager.Id) {
+                        new_managers.push(aManager);
+                    }
+                });
+                if(resData.Manager != null){
+                    new_managers.push(resData.Manager);
                 }
-            });
-            if(resData.Manager != null){
-                new_managers.push(resData.Manager);
+            }else{
+                response = resData.Error;
             }
         }).catch(err => {
             console.log(err);
@@ -59,7 +76,11 @@ export function updateManager(token, manager, managers) {
 
         dispatch({
             type: "UPDATE_MANAGER",
-            payload: new_managers
+            payload: {
+                Managers: new_managers,
+                Response: response,
+                Error: error,
+            }
         });
     };
 }
@@ -67,6 +88,8 @@ export function updateManager(token, manager, managers) {
 export function deleteManager(token, managerId, managers) {
     return async dispatch => {
         let new_managers = [];
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/manager/deleteManager', {
             method: 'POST',
             headers: {
@@ -76,28 +99,39 @@ export function deleteManager(token, managerId, managers) {
             body: '{"Id":' + managerId + '}'
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            managers.forEach(aManager => {
-                if (aManager.Id !== managerId) {
-                    new_managers.push(aManager);
-                }
-            });
+            if(!error){
+                managers.forEach(aManager => {
+                    if (aManager.Id !== managerId) {
+                        new_managers.push(aManager);
+                    }
+                });
+            }else{
+                response = resData.Error;
+            }
+
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "DELETE_MANAGER",
-            payload: new_managers
+            payload: {
+                Managers: new_managers,
+                Response: response,
+                Error: error,
+            }
         });
     };
 }
 export function findManager(token, managerId) {
     return async dispatch => {
         let selected_manager = null;
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/manager/findManager', {
             method: 'POST',
             headers: {
@@ -107,18 +141,39 @@ export function findManager(token, managerId) {
             body: '{"Id":' + managerId + '}'
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            selected_manager = resData.Manager;
+            if(!error){
+                selected_manager = resData.Manager;
+            }else{
+                response = resData.Error;
+            }
+
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "FIND_MANAGER",
-            payload: selected_manager
+            payload: {
+                FindManager: selected_manager,
+                Response: response,
+                Error: error,
+            }
+        });
+    };
+}
+
+export function setErrorFalseManager() {
+    return async dispatch => {
+        dispatch({
+            type: "setErrorFalseManager",
+            payload: {
+                Response: "...",
+                Error:false
+            }
         });
     };
 }

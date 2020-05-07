@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 exports.deleteManager = (req, res, next) => {
     if (req.body.Id == null) {
         return res.status(404).json({
-            Message: 'Values/Value missing when manager deleting!'
+            Error: 'Values/Value missing when manager deleting!'
         });
     }
     Manager.destroy({
@@ -24,7 +24,7 @@ exports.deleteManager = (req, res, next) => {
 exports.updateManager = (req, res, next) => {
     if (req.body.Name == null || req.body.Password == null || req.body.Real_Name == null || req.body.Surname == null || req.body.Id == null) {
         return res.status(404).json({
-            Message: 'Values/Value missing when manager updating!'
+            Error: 'Values/Value missing when manager updating!'
         });
     }
     bcrypt.hash(req.body.Password, 10, (err, hash) => {
@@ -73,7 +73,7 @@ exports.updateManager = (req, res, next) => {
 exports.findManager = (req, res, next) => {
     if (req.body.Id == null) {
         return res.status(404).json({
-            Message: 'Values/Value missing when manager finding!'
+            Error: 'Values/Value missing when manager finding!'
         });
     }
     Manager.findOne({

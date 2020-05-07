@@ -1,6 +1,8 @@
 export function fetchBuses(token) {
     return async dispatch => {
         let buses = [];
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/bus/getBuses', {
             method: 'GET',
             headers: {
@@ -9,14 +11,18 @@ export function fetchBuses(token) {
             }
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            const s = resData.Bus;
-            for (let i = 0; i < s.length; i++) {
-                let bus = s[i];
-                buses.push(bus);
+            if(!error){
+                const s = resData.Bus;
+                for (let i = 0; i < s.length; i++) {
+                    let bus = s[i];
+                    buses.push(bus);
+                }
+            }else{
+                response = resData.Error;
             }
         }).catch(err => {
             console.log(err);
@@ -24,13 +30,20 @@ export function fetchBuses(token) {
 
         dispatch({
             type: "FETCH_BUS",
-            payload: buses
+            payload: {
+                Buses:buses,
+                Response: response,
+                Error: error,
+            }
         });
     };
 }
+
 export function addBus(token, bus, buses) {
     return async dispatch => {
         let new_buses = [];
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/bus/addBus', {
             method: 'POST',
             headers: {
@@ -40,27 +53,38 @@ export function addBus(token, bus, buses) {
             body: JSON.stringify(bus)
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            buses.forEach(aBus => {
-                new_buses.push(aBus);
-            });
-            new_buses.push(resData.Bus);
+            if(!error){
+                buses.forEach(aBus => {
+                    new_buses.push(aBus);
+                });
+                new_buses.push(resData.Bus);
+            }else{
+                response = resData.Error;
+            }
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "ADD_BUS",
-            payload: new_buses
+            payload: {
+                Buses: new_buses,
+                Response: response,
+                Error: error,
+            }
         });
     };
 }
+
 export function updateBus(token, bus, buses) {
     return async dispatch => {
         let new_buses = [];
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/bus/updateBus', {
             method: 'POST',
             headers: {
@@ -70,17 +94,21 @@ export function updateBus(token, bus, buses) {
             body: JSON.stringify(bus)
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            buses.forEach(aBus => {
-                if (aBus.Id !== bus.Id) {
-                    new_buses.push(aBus);
+            if(!error){
+                buses.forEach(aBus => {
+                    if (aBus.Id !== bus.Id) {
+                        new_buses.push(aBus);
+                    }
+                });
+                if(resData.Bus != null){
+                    new_buses.push(resData.Bus);
                 }
-            });
-            if(resData.Bus != null){
-                new_buses.push(resData.Bus);
+            }else{
+                response = resData.Error;
             }
         }).catch(err => {
             console.log(err);
@@ -88,7 +116,11 @@ export function updateBus(token, bus, buses) {
 
         dispatch({
             type: "UPDATE_BUS",
-            payload: new_buses
+            payload: {
+                Buses: new_buses,
+                Response: response,
+                Error: error,
+            }
         });
     };
 }
@@ -96,6 +128,8 @@ export function updateBus(token, bus, buses) {
 export function deleteBus(token, busId, buses) {
     return async dispatch => {
         let new_buses = [];
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/bus/deleteBus', {
             method: 'POST',
             headers: {
@@ -105,28 +139,38 @@ export function deleteBus(token, busId, buses) {
             body: '{"Id":' + busId + '}'
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            buses.forEach(aBus => {
-                if (aBus.Id !== busId) {
-                    new_buses.push(aBus);
-                }
-            });
+            if(!error){
+                buses.forEach(aBus => {
+                    if (aBus.Id !== busId) {
+                        new_buses.push(aBus);
+                    }
+                });
+            }else{
+                response = resData.Error;
+            }
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "DELETE_BUS",
-            payload: new_buses
+            payload: {
+                Buses: new_buses,
+                Response: response,
+                Error: error,
+            }
         });
     };
 }
 export function findBus(token, busId) {
     return async dispatch => {
         let selected_bus = null;
+        let response = "..";
+        let error = false;
         await fetch('http://localhost:8000/bus/findBus', {
             method: 'POST',
             headers: {
@@ -136,18 +180,38 @@ export function findBus(token, busId) {
             body: '{"Id":' + busId + '}'
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
+                error = true;
             }
             return res.json();
         }).then(resData => {
-            selected_bus = resData.Bus;
+            if(!error){
+                selected_bus = resData.Bus;
+            }else{
+                response = resData.Error;
+            }
         }).catch(err => {
             console.log(err);
         });
 
         dispatch({
             type: "FIND_BUS",
-            payload: selected_bus
+            payload: {
+                FindBus: selected_bus,
+                Response: response,
+                Error: error,
+            }
+        });
+    };
+}
+
+export function setErrorFalseBus() {
+    return async dispatch => {
+        dispatch({
+            type: "setErrorFalseBus",
+            payload: {
+                Response: "...",
+                Error:false
+            }
         });
     };
 }

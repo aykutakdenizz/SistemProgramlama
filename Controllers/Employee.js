@@ -3,7 +3,7 @@ const Employee = require('../Models/Employee');
 exports.addEmployee = (req, res, next) => {
     if (req.body.Name == null || req.body.Surname == null ) {
         return res.status(404).json({
-            Message: 'Values/Value missing when adding employee!'
+            Error: 'Values/Value missing when adding employee!'
         });
     }
     const newEmployee = new Employee({
@@ -24,7 +24,7 @@ exports.addEmployee = (req, res, next) => {
 exports.deleteEmployee = (req, res, next) => {
     if (req.body.Id == null) {
         return res.status(404).json({
-            Message: 'Values/Value missing when deleting employee!'
+            Error: 'Values/Value missing when deleting employee!'
         });
     }
     Employee.destroy({
@@ -44,7 +44,7 @@ exports.deleteEmployee = (req, res, next) => {
 exports.updateEmployee = (req, res, next) => {
     if ( req.body.Id == null) {
         return res.status(404).json({
-            Message: 'Values/Value missing when updating employee!'
+            Error: 'Values/Value missing when updating employee!'
         });
     }
     Employee.update({
@@ -83,7 +83,7 @@ exports.updateEmployee = (req, res, next) => {
 exports.findEmployee = (req, res, next) => {
     if (req.body.Id == null) {
         return res.status(404).json({
-            Message: 'Values/Value missing when finding employee!'
+            Error: 'Values/Value missing when finding employee!'
         });
     }
     Employee.findOne({

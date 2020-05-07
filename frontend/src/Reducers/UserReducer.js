@@ -1,33 +1,50 @@
-
 const initialUser = {
     Users: [],
     FindUser: null,
+    SelectedUser : null,
+    Error: false,
+    Response: "...",
 };
 
-const UserReducer = (state= initialUser, action) => {
+const UserReducer = (state = initialUser, action) => {
     switch (action.type) {
         case "FETCH_USER":
             state = {
                 ...state,
-                Users: action.payload
+                Users: action.payload.Users,
+                Error: action.payload.Error,
+                Response: action.payload.Response,
             };
             break;
         case "UPDATE_USER":
             state = {
                 ...state,
-                Users: action.payload
+                Users: action.payload.Users,
+                Error: action.payload.Error,
+                Response: action.payload.Response,
             };
             break;
         case "DELETE_USER":
             state = {
                 ...state,
-                Users: action.payload
+                Users: action.payload.Users,
+                Error: action.payload.Error,
+                Response: action.payload.Response,
             };
             break;
         case "FIND_USER":
             state = {
                 ...state,
-                FindUser: action.payload
+                SelectedUser: action.payload.FindUser,
+                Error: action.payload.Error,
+                Response: action.payload.Response,
+            };
+            break;
+        case "setErrorFalseUser":
+            state = {
+                ...state,
+                Error: action.payload.Error,
+                Response: action.payload.Response
             };
             break;
         default:

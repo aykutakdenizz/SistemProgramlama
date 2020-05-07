@@ -60,6 +60,7 @@
       <workItem from="1588428089859" duration="2257000" />
       <workItem from="1588536001328" duration="17000" />
       <workItem from="1588686866803" duration="5677000" />
+      <workItem from="1588801964224" duration="17246000" />
     </task>
     <servers />
   </component>
@@ -104,13 +105,22 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state width="1345" height="179" key="GridCell.Tab.0.right/0.0.1366.728/1366.0.1366.728@0.0.1366.728" timestamp="1585488002915" />
+    <state x="92" y="92" width="1182" height="544" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1588808746868">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="92" y="92" width="1182" height="544" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1366.728/1366.0.1600.860@0.0.1366.728" timestamp="1588808746867" />
+    <state x="329" y="0" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1588802955316">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="329" y="0" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1366.728/1366.0.1600.860@0.0.1366.728" timestamp="1588802955316" />
     <state x="339" y="162" key="run.anything.popup" timestamp="1586548093166">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="339" y="162" key="run.anything.popup/0.0.1366.728/1366.0.1366.728@0.0.1366.728" timestamp="1586548093166" />
-    <state x="346" y="49" width="672" height="678" key="search.everywhere.popup" timestamp="1586626685949">
+    <state x="346" y="49" width="672" height="678" key="search.everywhere.popup" timestamp="1588802606549">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="346" y="49" width="672" height="678" key="search.everywhere.popup/0.0.1366.728/1366.0.1366.728@0.0.1366.728" timestamp="1586626685949" />
+    <state x="346" y="49" width="672" height="678" key="search.everywhere.popup/0.0.1366.728/1366.0.1600.860@0.0.1366.728" timestamp="1588802606549" />
   </component>
 </project>

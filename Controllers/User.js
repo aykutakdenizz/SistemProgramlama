@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 exports.deleteUser = (req, res, next) => {
     if (req.body.Id == null) {
         return res.status(404).json({
-            Message: 'Values/Value missing when user deleting!'
+            Error: 'Values/Value missing when user deleting!'
         });
     }
     User.destroy({
@@ -24,7 +24,7 @@ exports.deleteUser = (req, res, next) => {
 exports.updateUser = (req, res, next) => {
     if (req.body.Name == null || req.body.Password == null || req.body.Real_Name == null || req.body.Surname == null || req.body.Money == null) {
         return res.status(404).json({
-            Message: 'Values/Value missing when user updating!'
+            Error: 'Values/Value missing when user updating!'
         });
     }
     bcrypt.hash(req.body.Password, 10, (err, hash) => {
@@ -72,6 +72,11 @@ exports.updateUser = (req, res, next) => {
 
 };
 exports.findUser = (req, res, next) => {
+    if (req.body.Id == null) {
+        return res.status(404).json({
+            Error: 'Values/Value missing when finding user!'
+        });
+    }
     User.findOne({
         where: {
             Id: req.body.Id,
