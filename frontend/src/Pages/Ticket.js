@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
-
-import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
@@ -16,7 +14,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {findTrip, findTripWithTicket, setErrorFalseTrip, setShowFalseTrip} from "../Actions/TripAction";
-import {findBusWithTicket, findBusWithTrip} from "../Actions/BusActions";
+import {findBusWithTicket} from "../Actions/BusActions";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import {CSVLink} from "react-csv";

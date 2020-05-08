@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {connect} from "react-redux";
 
 import {deleteBus, fetchBuses, updateBus, addBus, findBus, setErrorFalseBus} from "../Actions/BusActions";
-import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Modal from "react-bootstrap/Modal";
@@ -14,7 +13,6 @@ import {CSVLink} from "react-csv";
 
 const DataTable = require('react-data-components').DataTable;
 let token = null;
-let actionObject = null;
 
 
 class Bus extends Component {

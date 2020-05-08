@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
-
-import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import {
     deleteUser,

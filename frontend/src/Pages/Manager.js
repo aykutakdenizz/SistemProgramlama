@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
-import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import {deleteManager, fetchManagers, findManager, setErrorFalseManager, updateManager} from "../Actions/ManagerAction";
 import Modal from "react-bootstrap/Modal";
@@ -90,13 +89,6 @@ class Manager extends Component {
                     Download.CSV
                 </Button>
                 {this.state.download && <CSVLink data={this.props.managerReducer.Managers} headers={headers} filename="managers.csv">Click Here</CSVLink>}
-
-
-
-
-                <Button onClick={() => {
-                    this.props.findManager(token, 1);
-                }}>FIND</Button>
 
 
                 <Modal show={this.state.update}>

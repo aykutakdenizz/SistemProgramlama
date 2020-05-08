@@ -9,7 +9,6 @@ import {
     findEmployee,
     setErrorFalseEmployee
 } from "../Actions/EmployeeAction";
-import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Card from "react-bootstrap/Card";
@@ -17,7 +16,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import {CSVLink, CSVDownload} from "react-csv";
+import {CSVLink} from "react-csv";
 const DataTable = require('react-data-components').DataTable;
 
 

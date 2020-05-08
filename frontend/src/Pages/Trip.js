@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
-
-import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import {addTrip, deleteTrip, fetchTrips, findTrip, setErrorFalseTrip, updateTrip} from "../Actions/TripAction";
 import Modal from "react-bootstrap/Modal";
@@ -24,6 +22,7 @@ class Trip extends Component {
         super(props);
         this.buttonsRender = this.buttonsRender.bind(this);
         this.buttonsRender2 = this.buttonsRender2.bind(this);
+        this.buttonsRender3 = this.buttonsRender3.bind(this);
         this.state = {
             update: false,
             add: false,
@@ -110,6 +109,11 @@ class Trip extends Component {
             (str===true)?("Active"):("Not Active")
         );
     }
+    buttonsRender3(str) {
+        return (
+            (str!==null)?(new Date(str)+" "):("")
+            );
+    }
 
     componentDidMount() {
         token = localStorage.getItem("token");
@@ -136,7 +140,7 @@ class Trip extends Component {
                         { title: 'Is_Active', prop: 'Is_Active' ,render: this.buttonsRender2.bind(this)},
                         { title: 'Destination', prop: 'Destination' },
                         { title: 'Departure', prop: 'Departure' },
-                        { title: 'Departure_Time', prop: 'Departure_Time' },
+                        { title: 'Departure_Time', prop: 'Departure_Time' ,render:this.buttonsRender3.bind(this),order:false},
                         { title: 'Bus_Id', prop: 'Bus_Id' },
                         { title: 'Driver_Id', prop: 'Driver_Id' },
                         { title: 'Payment', prop: 'Payment' },
@@ -201,7 +205,7 @@ class Trip extends Component {
                                                 <Form.Group controlId="formBasicProjectName">
                                                     <Form.Label>Departure Time</Form.Label>
                                                     <Form.Control type="text"
-                                                                  placeholder={(this.props.tripReducer.SelectedTrip === null) ? ("Please enter Departure Time") : (this.props.tripReducer.SelectedTrip.Departure_Time)}
+                                                                  placeholder={(this.props.tripReducer.SelectedTrip === null) ? ("YYYY-MM-DDTHH:MM:SS") : (this.props.tripReducer.SelectedTrip.Departure_Time)}
                                                                   ref={this.Departure_TimeElement}/>
                                                 </Form.Group>
                                             </Col>

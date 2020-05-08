@@ -44,6 +44,7 @@ export function addTrip(token, trip, trips) {
         let new_trips = [];
         let response = [];
         let error = false;
+        trip.Departure_Time = new Date(trip.Departure_Time);
         await fetch('http://localhost:8000/trip/addTrip', {
             method: 'POST',
             headers: {
@@ -85,6 +86,7 @@ export function updateTrip(token, trip, trips) {
         let new_trips = [];
         let response = [];
         let error = false;
+        trip.Departure_Time = new Date(trip.Departure_Time);
         await fetch('http://localhost:8000/trip/updateTrip', {
             method: 'POST',
             headers: {
@@ -191,7 +193,7 @@ export function findTrip(token, tripId) {
                 selected_trip = resData.Trip;
                 response.push("Destination:"+selected_trip.Destination);
                 response.push("Departure:"+selected_trip.Departure);
-                response.push( "Departure Time:"+selected_trip.Departure_Time);
+                response.push( "Departure Time:"+new Date(selected_trip.Departure_Time));
                 response.push("Bus Id:"+selected_trip.Bus_Id);
                 response.push("Driver Id:"+selected_trip.Driver_Id);
                 response.push("Payment:"+selected_trip.Payment);
@@ -239,7 +241,7 @@ export function findTripWithTicket(token, id) {
                 selected_trip = resData.Trip;
                 response.push("Destination:"+selected_trip.Destination);
                 response.push("Departure:"+selected_trip.Departure);
-                response.push( "Departure Time:"+selected_trip.Departure_Time);
+                response.push( "Departure Time:"+new Date(selected_trip.Departure_Time));
                 response.push("Bus Id:"+selected_trip.Bus_Id);
                 response.push("Driver Id:"+selected_trip.Driver_Id);
                 response.push("Payment:"+selected_trip.Payment);

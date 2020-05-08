@@ -29,14 +29,6 @@ class Login extends Component {
         await this.props.login(person);
     };
 
-    goHome = () => {
-        if (!this.props.mainReducer.Error) {
-            this.props.history.push('/MainPage');
-        } else {
-            return null;
-        }
-    };
-
     render() {
         return (
             <React.Fragment>
@@ -81,7 +73,7 @@ class Login extends Component {
                                                 </Form.Group>
                                             </Col>
                                             <Col md="auto">
-                                                <NavLink to="/SignUp">Dont't you have a account? Please click here to sign up</NavLink>
+                                                <NavLink to="/SignUp">Dont't you have an account? Please click here to sign up</NavLink>
                                             </Col>
                                         </Row>
                                         <Col md="auto">
