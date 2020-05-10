@@ -45,7 +45,7 @@ class Trip extends Component {
         event.preventDefault();
         const trip = {
             Id: this.props.tripReducer.SelectedTrip.Id,
-            Is_Active: (this.Is_ActiveElement.current.value === "") ? (this.props.tripReducer.SelectedTrip.Is_Active) : (this.Is_ActiveElement.current.value),
+            Is_Active: (this.Is_ActiveElement.current.value === "Active"),
             Destination: (this.DestinationElement.current.value === "") ? (this.props.tripReducer.SelectedTrip.Destination) : (this.DestinationElement.current.value),
             Departure: (this.DepartureElement.current.value === "") ? (this.props.tripReducer.SelectedTrip.Departure) : (this.DepartureElement.current.value),
             Departure_Time: (this.Departure_TimeElement.current.value === "") ? (this.props.tripReducer.SelectedTrip.Departure_Time) : (this.Departure_TimeElement.current.value),
@@ -59,7 +59,7 @@ class Trip extends Component {
     submitHandlerAdd = async (event) => {
         event.preventDefault();
         const trip = {
-            Is_Active: (this.Is_ActiveElement.current.value === "") ? true : (this.Is_ActiveElement.current.value),
+            Is_Active: (this.Is_ActiveElement.current.value === "Active"),
             Destination: (this.DestinationElement.current.value === "") ? null : (this.DestinationElement.current.value),
             Departure: (this.DepartureElement.current.value === "") ? null : (this.DepartureElement.current.value),
             Departure_Time: (this.Departure_TimeElement.current.value === "") ? null : (this.Departure_TimeElement.current.value),
@@ -178,11 +178,12 @@ class Trip extends Component {
                                     <Form className="UpdateProject-Card_Form" onSubmit={this.submitHandler}>
                                         <Row>
                                             <Col md="auto">
-                                                <Form.Group controlId="formBasicProjectName">
-                                                    <Form.Label>Trip Is_active</Form.Label>
-                                                    <Form.Control type="text"
-                                                                  placeholder={(this.props.tripReducer.SelectedTrip === null) ? ("Please enter active") : (this.props.tripReducer.SelectedTrip.Is_Active)}
-                                                                  ref={this.Is_ActiveElement}/>
+                                                <Form.Group controlId="exampleForm.ControlSelect1">
+                                                    <Form.Label>Role select</Form.Label>
+                                                    <Form.Control as="select" ref={this.Is_ActiveElement}>
+                                                        <option>Active</option>
+                                                        <option>Not Active</option>
+                                                    </Form.Control>
                                                 </Form.Group>
                                             </Col>
                                             <Col md="auto">
@@ -205,7 +206,7 @@ class Trip extends Component {
                                                 <Form.Group controlId="formBasicProjectName">
                                                     <Form.Label>Departure Time</Form.Label>
                                                     <Form.Control type="text"
-                                                                  placeholder={(this.props.tripReducer.SelectedTrip === null) ? ("YYYY-MM-DDTHH:MM:SS") : (this.props.tripReducer.SelectedTrip.Departure_Time)}
+                                                                  placeholder="yyyy-mm-ddThh:mm:ss"
                                                                   ref={this.Departure_TimeElement}/>
                                                 </Form.Group>
                                             </Col>
@@ -260,11 +261,12 @@ class Trip extends Component {
                                     <Form className="UpdateProject-Card_Form" onSubmit={this.submitHandlerAdd}>
                                         <Row>
                                             <Col md="auto">
-                                                <Form.Group controlId="formBasicProjectName">
-                                                    <Form.Label>Trip Is_active</Form.Label>
-                                                    <Form.Control type="text"
-                                                                  placeholder="Please enter active"
-                                                                  ref={this.Is_ActiveElement}/>
+                                                <Form.Group controlId="exampleForm.ControlSelect1">
+                                                    <Form.Label>Role select</Form.Label>
+                                                    <Form.Control as="select" ref={this.Is_ActiveElement}>
+                                                        <option>Active</option>
+                                                        <option>Not Active</option>
+                                                    </Form.Control>
                                                 </Form.Group>
                                             </Col>
                                             <Col md="auto">
@@ -287,7 +289,7 @@ class Trip extends Component {
                                                 <Form.Group controlId="formBasicProjectName">
                                                     <Form.Label>Departure Time</Form.Label>
                                                     <Form.Control type="text"
-                                                                  placeholder="Please enter Departure Time"
+                                                                  placeholder="yyyy-mm-ddThh:mm:ss"
                                                                   ref={this.Departure_TimeElement}/>
                                                 </Form.Group>
                                             </Col>

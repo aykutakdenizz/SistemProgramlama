@@ -126,7 +126,7 @@ class Employee extends Component {
                                         <Row>
                                             <Col md="auto">
                                                 <Form.Group controlId="formBasicProjectName">
-                                                    <Form.Label>Bus Plate</Form.Label>
+                                                    <Form.Label>Name</Form.Label>
                                                     <Form.Control type="text"
                                                                   placeholder={(this.props.employeeReducer.SelectedEmployee===null) ? ("Please enter name"):(this.props.employeeReducer.SelectedEmployee.Name)}
                                                                   ref={this.EmployeeNameElement}/>
@@ -134,7 +134,7 @@ class Employee extends Component {
                                             </Col>
                                             <Col md="auto">
                                                 <Form.Group controlId="formBasicProjectName">
-                                                    <Form.Label>Bus Seat Plan</Form.Label>
+                                                    <Form.Label>Surname</Form.Label>
                                                     <Form.Control type="text"
                                                                   placeholder={(this.props.employeeReducer.SelectedEmployee===null) ? ("Please enter surname"):(this.props.employeeReducer.SelectedEmployee.Surname)}
                                                                   ref={this.EmployeeSurnameElement}/>
@@ -142,7 +142,7 @@ class Employee extends Component {
                                             </Col>
                                             <Col md="auto">
                                                 <Form.Group controlId="formBasicProjectName">
-                                                    <Form.Label>Bus Empty Seats</Form.Label>
+                                                    <Form.Label>Address</Form.Label>
                                                     <Form.Control type="text"
                                                                   placeholder={(this.props.employeeReducer.SelectedEmployee===null) ? ("Please enter address"):(this.props.employeeReducer.SelectedEmployee.Address)}
                                                                   ref={this.EmployeeAddressElement}/>

@@ -21,6 +21,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/frontend/src/Pages" />
     <property name="nodejs_package_manager_path" value="npm" />
+    <property name="ts.external.directory.path" value="D:\JetBrains\WebStorm 2019.3.2\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -68,6 +69,7 @@
       <workItem from="1588882530261" duration="630000" />
       <workItem from="1588934236344" duration="2087000" />
       <workItem from="1589102012922" duration="178000" />
+      <workItem from="1589111508214" duration="325000" />
     </task>
     <servers />
   </component>
