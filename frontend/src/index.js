@@ -6,7 +6,7 @@ import store from "./store";
 import './index.css';
 import App from './App';
 
-
+localStorage.setItem("login", "false");
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>

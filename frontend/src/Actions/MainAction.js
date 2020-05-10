@@ -26,6 +26,7 @@ export function login(person) {
                 localStorage.setItem("token", token);
                 localStorage.setItem("Role", resData.Role);
                 localStorage.setItem("Id", resData.Id);
+                localStorage.setItem("login", "true");
                 success = true;
             }else{
                 response = resData.Error;

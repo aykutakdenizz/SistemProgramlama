@@ -13,6 +13,7 @@ import Navigation from "./Pages/Navigation";
 import HomePage from "./Pages/HomePage";
 import Ticket from "./Pages/Ticket";
 import SignUp from "./Pages/SignUp";
+import Redirect from "react-router-dom/es/Redirect";
 
 
 class App extends Component {
@@ -21,6 +22,7 @@ class App extends Component {
         <BrowserRouter>
             <React.Fragment>
                 <Navigation/>
+                {localStorage.getItem("login")==="false" && <Redirect to='/Login' />}
                 <main className="main-content">
                     <Switch>
                         <Route path="/" component={null}/>
