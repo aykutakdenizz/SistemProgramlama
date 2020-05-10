@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter, Route} from 'react-router-dom';
@@ -15,7 +15,8 @@ import Ticket from "./Pages/Ticket";
 import SignUp from "./Pages/SignUp";
 
 
-function App() {
+class App extends Component {
+    render(){
     return (
         <BrowserRouter>
             <React.Fragment>
@@ -36,7 +37,7 @@ function App() {
                 </main>
             </React.Fragment>
         </BrowserRouter>
-    );
+    );}
 }
 
 export default App;
